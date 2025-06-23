@@ -1,5 +1,5 @@
 import React from "react";
-import merge from "../../utils/merge.tsx";
+import merge from "../../utils/merge.ts";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "danger" | "plain";
 

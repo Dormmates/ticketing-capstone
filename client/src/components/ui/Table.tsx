@@ -1,9 +1,8 @@
-import React from "react";
 import type { TableHTMLAttributes, HTMLAttributes, ThHTMLAttributes, TdHTMLAttributes } from "react";
 import merge from "../../utils/merge";
 import Button from "./Button";
-import next from "../assets/icons/next.png";
-import prev from "../assets/icons/prev.png";
+import next from "../../assets/icons/next.png";
+import prev from "../../assets/icons/prev.png";
 
 type PaginationProps = {
   className?: string;

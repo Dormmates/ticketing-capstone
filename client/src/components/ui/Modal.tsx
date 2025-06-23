@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import close from "../assets/icons/close.png";
-import merge from "../../utils/merge";
+import close from "../../assets/icons/close.png";
+import merge from "../../utils/merge.ts";
 import Button from "./Button";
 
 interface ModalProps {
