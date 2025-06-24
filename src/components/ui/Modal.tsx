@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import close from "../../assets/icons/close.png";
 import merge from "../../utils/merge.ts";
-import Button from "./Button";
+import Button from "./Button.tsx";
 
 interface ModalProps {
   isOpen: boolean;
