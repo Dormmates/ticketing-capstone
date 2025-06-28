@@ -1,49 +1,85 @@
-import React, { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import InputLabel from "./InputLabel";
+import icon from "../../assets/icons/dropdown.png";
 import merge from "../../utils/merge";
-import getTextFromChildren from "../../utils/getTextFromChildren";
-import Button from "./Button";
 
-export interface DropdownProps {
-  replace?: boolean;
-  label?: string;
-  width?: string;
+export interface DropdownOption {
+  label: string;
+  value?: string | number;
   onClick?: () => void;
-  children: React.ReactNode;
+  disabled?: boolean;
 }
 
-const dropdownStyle = "absolute w-full bg-gray-200 text-black flex flex-col rounded-lg";
+interface DropdownProps {
+  className?: string;
+  label?: string;
+  options: DropdownOption[];
+  value: string | number | undefined;
+  onChange: (value: string | number) => void;
+}
 
-const Dropdown = ({ children, label = "Something", width = "", onClick, replace = true }: Dropdown) => {
-  const [display, setDisplay] = useState(false);
-  const [selected, setSelected] = useState<string>("Choose");
+const Dropdown = ({ label, options, value, onChange, className }: DropdownProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = () => {
-    setDisplay((prev) => !prev);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleSelect = (option: DropdownOption) => {
+    setIsOpen(false);
+    if (option.onClick) option.onClick();
+    if (option.value !== undefined) {
+      onChange(option.value);
+    }
   };
 
-  const elements = React.Children.map(children, (child) => {
-    if (React.isValidElement(child)) {
-      const originalOnClick = child.props.onClick;
-      const childrenTextContent = getTextFromChildren(child.props.children);
-
-      return React.cloneElement(child, {
-        onClick: (e: React.MouseEvent) => {
-          originalOnClick?.(e);
-          if (replace) setSelected(childrenTextContent);
-          setDisplay(false);
-        },
-      });
-    }
-    return child;
-  });
+  const baseStyle = "relative inline-block text-left";
+  const selectedLabel = options.find((o) => o.value === value)?.label || "Select...";
 
   return (
-    <div className={`flex flex-col gap-1 p-2 ${width}`} onClick={onClick}>
-      {replace ? <span>{label}</span> : ""}
-      <Button onClick={handleClick}>{replace ? selected : label}</Button>
-      {display && (
-        <div className="relative top-2">
-          <div className={merge(dropdownStyle)}>{elements}</div>
+    <div className={merge(baseStyle, className)} ref={dropdownRef}>
+      {label && <InputLabel label={label} />}
+      <div
+        className="border rounded px-4 py-2 cursor-pointer bg-white shadow-sm flex justify-between items-center border-lightGrey"
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        {selectedLabel}
+        <img src={icon} alt="" />
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg">
+          {options.map((option, idx) => {
+            const isSelected = option.value === value;
+
+            return (
+              <div
+                key={idx}
+                className={`
+            px-4 py-2 
+            ${isSelected ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "hover:bg-blue-100 cursor-pointer"} 
+            ${option.disabled ? "opacity-50 pointer-events-none" : ""}
+          `}
+                onClick={() => {
+                  if (!isSelected && !option.disabled) {
+                    handleSelect(option);
+                  }
+                }}
+              >
+                {option.label}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

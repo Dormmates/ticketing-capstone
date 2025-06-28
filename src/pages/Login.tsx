@@ -1,38 +1,20 @@
-import Dropdown from "../components/ui/Dropdown";
-import DropdownItem from "../components/ui/DropdownItem";
-import SimpleCard from "../components/ui/SimpleCard";
-import LongCard from "../components/ui/LongCard";
-import LongCardItem from "../components/ui/LongCardItem";
+import { useState } from "react";
+import Dropdown, { type DropdownOption } from "../components/ui/Dropdown";
 
 const Login = () => {
-  return (
-    <div>
-      <Dropdown label="Distributor Type">
-        <DropdownItem>CCA Member</DropdownItem>
-        <DropdownItem>Faculty</DropdownItem>
-        <DropdownItem>Sponsor</DropdownItem>
-      </Dropdown>
-      <Dropdown label="Sample Name">
-        <DropdownItem>Marshall</DropdownItem>
-        <DropdownItem>Rory</DropdownItem>
-        <DropdownItem>Mark</DropdownItem>
-      </Dropdown>
-      <Dropdown label="Department">
-        <DropdownItem>SAMCIS</DropdownItem>
-        <DropdownItem>STELLA</DropdownItem>
-        <DropdownItem>SOHNABS</DropdownItem>
-      </Dropdown>
-      <SimpleCard />
-      <LongCard>
-        <LongCardItem />
-        <LongCardItem />
-        <LongCardItem />
-        <LongCardItem />
-      </LongCard>
+  const [selected, setSelected] = useState<string | number>("");
 
-      <span>Please Login First</span>
-    </div>
-  );
+  const handleCreateNew = () => {
+    alert("Hi");
+  };
+
+  const options: DropdownOption[] = [
+    { label: "Engineering", value: "eng" },
+    { label: "Science", value: "sci" },
+    { label: "Add new department", onClick: handleCreateNew },
+  ];
+
+  return <Dropdown className="w-1/2" label="Department" value={selected} onChange={setSelected} options={options} />;
 };
 
 export default Login;
