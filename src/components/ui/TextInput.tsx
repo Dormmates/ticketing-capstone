@@ -37,6 +37,7 @@ const TextInput = ({
         placeholder={placeholder}
         disabled={disabled}
         className={`w-full border rounded px-4 py-2 shadow-sm outline-none border-lightGrey 
+            focus:border-primary
           ${isError ? "border-red" : "border-lightGrey"}
           ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
         `}

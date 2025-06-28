@@ -17,8 +17,8 @@ const Login = () => {
   ];
 
   return (
-    <div>
-      <Dropdown className="w-1/2" label="Department" value={selected} onChange={setSelected} options={options} />
+    <div className="flex flex-col p-10 gap-2 max-w-lg">
+      <Dropdown label="Department" value={selected} onChange={setSelected} options={options} />
       <TextInput label="Name" onChange={(e) => setInput(e.target.value)} value={input} />
     </div>
   );

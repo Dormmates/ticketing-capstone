@@ -50,7 +50,10 @@ const Dropdown = ({ label, options, value, onChange, className }: DropdownProps)
     <div className={merge(baseStyle, className)} ref={dropdownRef}>
       {label && <InputLabel label={label} />}
       <div
-        className="border rounded px-4 py-2 cursor-pointer bg-white shadow-sm flex justify-between items-center border-lightGrey"
+        className={merge(
+          "border rounded px-4 py-2 cursor-pointer bg-white shadow-sm flex justify-between items-center transition-colors duration-150",
+          isOpen ? "border-primary" : "border-lightGrey"
+        )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selectedLabel}
