@@ -57,7 +57,7 @@ const Dropdown = ({ label, options, value, onChange, className }: DropdownProps)
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {selectedLabel}
-        <img src={icon} alt="" />
+        <img src={icon} alt="" className={`transition-all duration-200 ease-linear ${isOpen ? "-rotate-90 " : "rotate-0"}`} />
       </div>
 
       {isOpen && (
