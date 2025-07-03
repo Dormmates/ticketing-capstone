@@ -1,20 +1,17 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
-import type { User } from "../types/user";
+import { createContext, useContext, useEffect, useState, type ReactNode, type SetStateAction } from "react";
+import { useGetUserInformation } from "../_lib/@react-client-query/auth";
+import type { Distributor, User } from "../types/user";
 
-interface AuthData {
-  user: User | null;
-  token: string | null;
-}
+type AuthContextData = {
+  user: User | Distributor | null;
+  setUser: React.Dispatch<SetStateAction<User | Distributor | null>>;
+  isLoadingUser: boolean;
+};
 
-interface AuthContextType {
-  auth: AuthData;
-  setAuth: React.Dispatch<React.SetStateAction<AuthData>>;
-}
+const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
-const Auth = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuthContext = () => {
-  const context = useContext(Auth);
+export const useAuthContext = (): AuthContextData => {
+  const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuthContext must be used within an AuthContextProvider");
   }
@@ -22,27 +19,20 @@ export const useAuthContext = () => {
 };
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const AuthContextProvider = ({ children }: Props) => {
-  const [auth, setAuth] = useState<AuthData>(() => {
-    try {
-      const storedAuth = localStorage.getItem("auth");
-      return storedAuth ? JSON.parse(storedAuth) : { user: null, token: null };
-    } catch (err) {
-      console.error("Failed to parse auth data:", err);
-      return { user: null, token: null };
-    }
-  });
+  const [user, setUser] = useState<User | Distributor | null>(null);
+  const { data, isSuccess, isLoading } = useGetUserInformation();
 
   useEffect(() => {
-    localStorage.setItem("auth", JSON.stringify(auth));
-  }, [auth]);
+    if (isSuccess && data) {
+      setUser(data);
+    }
+  }, []);
 
-  const value = useMemo(() => ({ auth, setAuth }), [auth]);
-
-  return <Auth.Provider value={value}>{children}</Auth.Provider>;
+  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

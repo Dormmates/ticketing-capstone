@@ -1,4 +1,3 @@
-import React from "react";
 import merge from "../../utils/merge";
 
 export interface SimpleCardProps {

@@ -1,20 +1,63 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import CCALayout from "../layouts/CCALayout";
 import DistributorLayout from "../layouts/DistributorLayout";
-import CustomerLayout from "../layouts/CustomerLayout";
-import Auth from "../_auth/Auth";
+
 import Login from "../pages/Login";
+import { useAuthContext } from "../context/AuthContext";
+import ProtectedRoute from "./ProtectedRoute";
+import DistributorDashboard from "../pages/modules/distributor/DistributorDashboard";
+import CCADashboard from "../pages/modules/cca/CCADashboard";
+import DistributorLogin from "../pages/DistributorLogin";
+import CustomerLayout from "../layouts/CustomerLayout";
+import CustomerHome from "../pages/modules/customer/CustomerHome";
+import Unauthorized from "../pages/Unauthorized";
+import NotFound from "../pages/NotFound";
 
 const AppRoute = () => {
+  const { user } = useAuthContext();
+
   return (
     <Routes>
-      <Route path="/" element={<Auth />}>
-        <Route index element={<CCALayout />} />
-        <Route path="/distributor" element={<DistributorLayout />} />
+      {/** Route for CCA*/}
+      <Route
+        path="/"
+        element={
+          !user ? (
+            <Login />
+          ) : user.role === "distributor" ? (
+            <Navigate to="/distributor" />
+          ) : (
+            <ProtectedRoute allowedRoles={["head", "trainer"]}>
+              <CCALayout />
+            </ProtectedRoute>
+          )
+        }
+      >
+        <Route index element={<CCADashboard />} />
       </Route>
-      <Route path="/customer" element={<CustomerLayout />} />
 
-      <Route path="/login" element={<Login />} />
+      {/** Route for Distributor*/}
+      <Route
+        path="/distributor"
+        element={
+          <ProtectedRoute allowedRoles={["distributor"]}>
+            <CCALayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<DistributorDashboard />} />
+      </Route>
+
+      <Route path="/distributor/login" element={<DistributorLogin />} />
+
+      {/** Route for Customer*/}
+      <Route path="/customer" element={<CustomerLayout />}>
+        <Route index element={<CustomerHome />} />
+      </Route>
+
+      {/** Other Routes*/}
+      <Route path="/unathorized" element={<Unauthorized />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

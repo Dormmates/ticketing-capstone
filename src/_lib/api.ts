@@ -8,14 +8,11 @@ export const request = async <T>(
   type: RequestType,
   configs: AxiosRequestConfig = {}
 ): Promise<AxiosResponse<T>> => {
-  const token = localStorage.getItem("authToken");
-
   const isForm = type.includes("FormData");
   const requiresAuth = !type.includes("WithoutToken");
 
   const headers: AxiosRequestConfig["headers"] = {
     ...(isForm ? { "Content-Type": "multipart/form-data" } : { "Content-Type": "application/json" }),
-    ...(requiresAuth && token ? { Authorization: `Bearer ${token}` } : {}),
     ...configs.headers,
   };
 
@@ -23,6 +20,7 @@ export const request = async <T>(
     url: endpoint,
     method: type === "get" ? "get" : type === "delete" ? "delete" : "post",
     headers,
+    withCredentials: requiresAuth,
     ...configs,
   };
 
@@ -32,5 +30,10 @@ export const request = async <T>(
     config.data = data;
   }
 
-  return await axios<T>(config);
+  try {
+    return await axios<T>(config);
+  } catch (err: any) {
+    const message = err?.response?.data?.message || err?.response?.statusText || err?.message || "An error occurred";
+    throw new Error(message);
+  }
 };
