@@ -3,6 +3,7 @@ import logo from "../assets/images/cca-logo.png";
 import TextInput, { PasswordInput } from "../components/ui/TextInput";
 import { useState } from "react";
 import Button from "../components/ui/Button";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [formContent, setFormContent] = useState({
@@ -41,6 +42,9 @@ const Login = () => {
             <Button className="w-full" type="submit">
               Login
             </Button>
+            <Link className="mx-auto hover:opacity-50 duration-500 ease-linear" to="/distributor/login">
+              I'm a distributor
+            </Link>
           </form>
         </div>
       </ContentWrapper>

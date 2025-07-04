@@ -9,13 +9,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-const baseStyles = "px-4 py-2 rounded-lg text-white font-medium transition duration-200";
+const baseStyles = "px-4 py-2 rounded-md text-white font-medium transition duration-200";
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-primary hover:opacity-50",
-  secondary: "bg-gray-600 hover:bg-gray-700",
+  secondary: "bg-gray-600  hover:bg-gray-700",
   danger: "bg-red-600 hover:bg-red-700",
-  outline: "bg-transparent border border-gray-600 text-gray-800 hover:bg-gray-100",
+  outline: "bg-transparent !text-black  border border-black hover:opacity-50",
   plain: "hover:opacity-50",
 };
 

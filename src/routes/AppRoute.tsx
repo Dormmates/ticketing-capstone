@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import CCALayout from "../layouts/CCALayout";
 import DistributorLayout from "../layouts/DistributorLayout";
 
-import Login from "../pages/Login";
+import Login from "../pages/CCALogin";
 import { useAuthContext } from "../context/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import DistributorDashboard from "../pages/modules/distributor/DistributorDashboard";
