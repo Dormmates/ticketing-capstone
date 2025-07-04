@@ -6,6 +6,7 @@ type AuthContextData = {
   user: User | Distributor | null;
   setUser: React.Dispatch<SetStateAction<User | Distributor | null>>;
   isLoadingUser: boolean;
+  isDistributor: boolean;
 };
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -24,15 +25,19 @@ interface Props {
 
 const AuthContextProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | Distributor | null>(null);
-  const { data, isSuccess, isLoading } = useGetUserInformation();
+  const { data, isSuccess, isLoading } = useGetUserInformation({
+    enabled: user === null,
+  });
 
   useEffect(() => {
     if (isSuccess && data) {
       setUser(data);
     }
-  }, []);
+  }, [isSuccess, data]);
 
-  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading }}>{children}</AuthContext.Provider>;
+  const isDistributor = user ? "distributorTypeId" in user : false;
+
+  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading, isDistributor }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

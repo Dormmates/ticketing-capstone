@@ -81,9 +81,9 @@ export const PasswordInput = ({
       />
       <button
         type="button"
-        className={`absolute right-3 -translate-y-1/2 text-sm text-gray-500} ${label ? "top-[65%]" : "top-[50%]"}`}
+        className={`absolute right-3 -translate-y-1/2 text-sm text-gray-500
+      ${label ? (isError ? "top-[50%]" : "top-[65%]") : "top-1/2"}`}
         onClick={() => setShow((prev) => !prev)}
-        tabIndex={-1}
       >
         {show ? "Hide" : "Show"}
       </button>

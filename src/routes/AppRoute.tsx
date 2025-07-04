@@ -16,6 +16,8 @@ import NotFound from "../pages/NotFound";
 const AppRoute = () => {
   const { user } = useAuthContext();
 
+  console.log(user);
+
   return (
     <Routes>
       {/** Route for CCA*/}
@@ -41,14 +43,17 @@ const AppRoute = () => {
         path="/distributor"
         element={
           <ProtectedRoute allowedRoles={["distributor"]}>
-            <CCALayout />
+            <DistributorLayout />
           </ProtectedRoute>
         }
       >
         <Route index element={<DistributorDashboard />} />
       </Route>
 
-      <Route path="/distributor/login" element={<DistributorLogin />} />
+      <Route
+        path="/distributor/login"
+        element={user ? user.role === "distributor" ? <Navigate to="/distributor" /> : <Navigate to="/" /> : <DistributorLogin />}
+      />
 
       {/** Route for Customer*/}
       <Route path="/customer" element={<CustomerLayout />}>

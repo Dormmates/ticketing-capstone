@@ -6,6 +6,9 @@ import Button from "../components/ui/Button";
 import { Link } from "react-router-dom";
 import Modal from "../components/ui/Modal";
 import Dropdown from "../components/ui/Dropdown";
+import { useLogin } from "../_lib/@react-client-query/auth";
+import type { Distributor } from "../types/user";
+import { useAuthContext } from "../context/AuthContext";
 
 const distributorOptions = [
   { label: "CCA Member", value: 1 },
@@ -20,7 +23,10 @@ const groups = [
 ];
 
 const DistributorLogin = () => {
+  const login = useLogin();
+  const { setUser } = useAuthContext();
   const [openModal, setOpenModal] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const [formContent, setFormContent] = useState({
     email: "",
@@ -50,6 +56,18 @@ const DistributorLogin = () => {
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    login.mutate(
+      { ...formContent, expectedRole: "distributor" },
+      {
+        onSuccess: (data) => {
+          setUser(data);
+        },
+        onError: (er) => {
+          setLoginError(er.message);
+        },
+      }
+    );
   };
 
   return (
@@ -78,6 +96,7 @@ const DistributorLogin = () => {
           <Button className="w-full -mt-8 font-normal" variant="outline" type="button" onClick={() => setOpenModal(true)}>
             Request Distributor Account
           </Button>
+          {loginError && <h1 className="mx-auto text-red">{loginError}</h1>}
           <Link className="mx-auto hover:opacity-50 duration-500 ease-linear" to="/">
             I'm a CCA Staff
           </Link>

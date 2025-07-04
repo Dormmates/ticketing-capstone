@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 
 type RequestType = "get" | "post" | "delete" | "postFormData" | "postWithoutToken" | "postFormDataWithoutToken";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const request = async <T>(
   endpoint: string,
@@ -17,7 +18,7 @@ export const request = async <T>(
   };
 
   const config: AxiosRequestConfig = {
-    url: endpoint,
+    url: baseUrl + endpoint,
     method: type === "get" ? "get" : type === "delete" ? "delete" : "post",
     headers,
     withCredentials: requiresAuth,
@@ -33,7 +34,7 @@ export const request = async <T>(
   try {
     return await axios<T>(config);
   } catch (err: any) {
-    const message = err?.response?.data?.message || err?.response?.statusText || err?.message || "An error occurred";
+    const message = err?.response?.data?.error?.message || err?.response?.statusText || err?.message || "An error occurred";
     throw new Error(message);
   }
 };
