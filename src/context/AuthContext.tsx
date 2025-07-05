@@ -33,11 +33,15 @@ const AuthContextProvider = ({ children }: Props) => {
     if (isSuccess && data) {
       setUser(data);
     }
-  }, [isSuccess, data]);
+  }, []);
 
   const isDistributor = user ? "distributorTypeId" in user : false;
 
-  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading, isDistributor }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading, isDistributor }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthContextProvider;
