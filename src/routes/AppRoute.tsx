@@ -12,15 +12,16 @@ import CustomerLayout from "../layouts/CustomerLayout";
 import CustomerHome from "../pages/modules/customer/CustomerHome";
 import Unauthorized from "../pages/Unauthorized";
 import NotFound from "../pages/NotFound";
-import Shows from "../pages/modules/cca/Shows";
+import Shows from "../pages/modules/cca/shows/Shows";
 import MajorProduction from "../pages/modules/cca/MajorProduction";
 import PerformingGroups from "../pages/modules/cca/PerformingGroups";
-import Trainers from "../pages/modules/cca/Accounts/Trainers";
-import Distributors from "../pages/modules/cca/Accounts/Distributors";
-import CCAHead from "../pages/modules/cca/Accounts/CCAHead";
-import AccountRequests from "../pages/modules/cca/Accounts/AccountRequests";
+import Trainers from "../pages/modules/cca/accounts/Trainers";
+import Distributors from "../pages/modules/cca/accounts/Distributors";
+import CCAHead from "../pages/modules/cca/accounts/CCAHead";
+import AccountRequests from "../pages/modules/cca/accounts/AccountRequests";
 import SeatMap from "../pages/modules/cca/SeatMap";
 import DistributorHistory from "../pages/modules/distributor/DistributorHistory";
+import CreateShow from "../pages/modules/cca/shows/CreateShow";
 
 const AppRoute = () => {
   const { user } = useAuthContext();
@@ -54,6 +55,7 @@ const AppRoute = () => {
       >
         <Route index element={<CCADashboard />} />
         <Route path="shows" element={<Shows />} />
+        <Route path="shows/add" element={<CreateShow />} />
         <Route path="major-production" element={<MajorProduction />} />
         <Route path="performing-groups" element={<PerformingGroups />} />
         <Route path="manage/trainers" element={<Trainers />} />

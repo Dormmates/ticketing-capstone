@@ -15,10 +15,13 @@ interface DropdownProps {
   label?: string;
   options: DropdownOption[];
   value: string | number | undefined;
-  onChange: (value: string | number) => void;
+  onChange?: (value: string | number) => void;
+  disabled?: boolean;
+  isError?: boolean;
+  errorMessage?: string;
 }
 
-const Dropdown = ({ label, options, value, onChange, className }: DropdownProps) => {
+const Dropdown = ({ label, options, value, onChange, className, disabled = false, isError, errorMessage }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -38,41 +41,44 @@ const Dropdown = ({ label, options, value, onChange, className }: DropdownProps)
   const handleSelect = (option: DropdownOption) => {
     setIsOpen(false);
     if (option.onClick) option.onClick();
-    if (option.value !== undefined) {
+    if (option.value !== undefined && onChange) {
       onChange(option.value);
     }
   };
 
   const baseStyle = "relative inline-block text-left";
-  const selectedLabel = options.find((o) => o.value === value)?.label || "Select...";
+  const selectedLabel = options.find((o) => o.value === value)?.label || "Select Value";
 
   return (
     <div className={merge(baseStyle, className)} ref={dropdownRef}>
       {label && <InputLabel label={label} />}
       <div
         className={merge(
-          "border rounded px-4 py-2 cursor-pointer bg-white shadow-sm flex justify-between items-center transition-colors duration-150",
-          isOpen ? "border-primary" : "border-lightGrey"
+          "border rounded px-4 py-2 shadow-sm flex justify-between items-center transition-colors duration-150 gap-5",
+          isOpen ? "border-primary" : isError ? "border-red" : "border-lightGrey",
+          disabled ? "bg-slate-100 cursor-not-allowed opacity-60" : "bg-white cursor-pointer"
         )}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => {
+          if (!disabled) setIsOpen((prev) => !prev);
+        }}
       >
         {selectedLabel}
-        <img src={icon} alt="" className={`transition-all duration-200 ease-linear ${isOpen ? "-rotate-90 " : "rotate-0"}`} />
+        <img src={icon} alt="" className={`transition-all duration-200 ease-linear ${isOpen ? "-rotate-90" : "rotate-0"}`} />
       </div>
+      {isError && errorMessage && <p className="text-sm text-red mt-1">{errorMessage}</p>}
 
-      {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg">
+      {isOpen && !disabled && (
+        <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg overflow-y-auto max-h-[150px]">
           {options.map((option, idx) => {
             const isSelected = option.value === value;
 
             return (
               <div
                 key={idx}
-                className={`
-            px-4 py-2 
-            ${isSelected ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "hover:bg-blue-100 cursor-pointer"} 
-            ${option.disabled ? "opacity-50 pointer-events-none" : ""}
-          `}
+                className={`px-4 py-2 
+                  ${isSelected ? "bg-darkGrey text-gray-400 opacity-20 cursor-not-allowed" : "hover:bg-blue-100 cursor-pointer"} 
+                  ${option.disabled ? "opacity-50 pointer-events-none" : ""}
+                `}
                 onClick={() => {
                   if (!isSelected && !option.disabled) {
                     handleSelect(option);
