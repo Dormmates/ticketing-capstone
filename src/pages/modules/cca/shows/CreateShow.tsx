@@ -8,7 +8,7 @@ import InputLabel from "../../../../components/ui/InputLabel";
 import { useAuthContext } from "../../../../context/AuthContext";
 
 // this should be fetched on the server
-const groups = [{ label: "Group 1", value: "Your Group" }];
+const groups = [{ label: "SLU Dance Troupe", value: "12b1188a-92f2-4a7a-a382-fa911c2ab3d9" }];
 
 const productionType = [
   { label: "Showcase", value: "showcase" },
@@ -34,7 +34,7 @@ const CreateShow = () => {
 
   const [showData, setShowData] = useState({
     title: "",
-    group: user?.department[0]?.name || ("" as string | number),
+    group: user?.department[0]?.departmentId || ("" as string | number),
     productionType: "" as string | number,
     description: "",
     genre: [] as string[],
@@ -138,7 +138,7 @@ const CreateShow = () => {
               <Dropdown
                 isError={!!errors.group}
                 errorMessage={errors.group}
-                disabled={!!user?.department[0]?.name && user.role === "head"}
+                disabled={user?.role !== "head"}
                 className="w-full"
                 label="Performing Group"
                 options={groups}
