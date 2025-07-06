@@ -20,6 +20,7 @@ import Distributors from "../pages/modules/cca/Accounts/Distributors";
 import CCAHead from "../pages/modules/cca/Accounts/CCAHead";
 import AccountRequests from "../pages/modules/cca/Accounts/AccountRequests";
 import SeatMap from "../pages/modules/cca/SeatMap";
+import DistributorHistory from "../pages/modules/distributor/DistributorHistory";
 
 const AppRoute = () => {
   const { user } = useAuthContext();
@@ -79,6 +80,7 @@ const AppRoute = () => {
         }
       >
         <Route index element={<DistributorDashboard />} />
+        <Route path="history" element={<DistributorHistory />} />
       </Route>
 
       <Route

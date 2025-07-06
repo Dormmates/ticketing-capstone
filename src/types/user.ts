@@ -10,7 +10,7 @@ export interface User {
   distributor: {
     contactNumber: string;
     department: { name: string; departmentId: string };
-    distributorTypeId: number;
+    distributortypes: { id: number; name: string };
   }[];
 
   department: {

@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import Modal from "../components/ui/Modal";
 import Dropdown from "../components/ui/Dropdown";
 import { useLogin } from "../_lib/@react-client-query/auth";
-import type { Distributor } from "../types/user";
 import { useAuthContext } from "../context/AuthContext";
 
 const distributorOptions = [

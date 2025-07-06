@@ -15,7 +15,9 @@ const Header = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    contactNumber: user?.distributor[0].contactNumber,
   });
+
   const [openAccount, setOpenAccount] = useState(false);
 
   const closeAccountModal = () => {
@@ -26,6 +28,7 @@ const Header = () => {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
+      contactNumber: user?.distributor[0].contactNumber + "",
     });
 
     setOpenAccount(false);
@@ -33,6 +36,8 @@ const Header = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    console.log(name, value);
     setUserForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -70,8 +75,29 @@ const Header = () => {
               </div>
               <div className="flex gap-5">
                 <TextInput label="Email" value={userForm.email} onChange={handleInputChange} name="email" />
+                {user?.distributor[0]?.contactNumber && (
+                  <TextInput
+                    label="Contact Number"
+                    type="number"
+                    value={userForm.contactNumber + ""}
+                    onChange={handleInputChange}
+                    name="contactNumber"
+                  />
+                )}
                 {user?.department[0]?.name && (
                   <TextInput label="Group (Cannot Edit)" disabled={true} value={user.department[0].name} onChange={() => {}} />
+                )}
+              </div>
+
+              <div className="flex gap-5">
+                <TextInput
+                  label="Distributor Type (Cannot Edit)"
+                  disabled={true}
+                  value={user?.distributor[0].distributortypes.name + ""}
+                  onChange={() => {}}
+                />
+                {user?.distributor[0].distributortypes.id === 2 && (
+                  <TextInput label="Department (Cannot Edit)" disabled={true} value={user.distributor[0].department.name} onChange={() => {}} />
                 )}
               </div>
             </div>
