@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
-import type { Distributor, User } from "../../types/user";
+import type { User } from "../../types/user";
 
 interface LoginPayload {
   email: string;
@@ -9,9 +9,9 @@ interface LoginPayload {
 }
 
 export const useLogin = () => {
-  return useMutation<User | Distributor, Error, LoginPayload>({
+  return useMutation<User, Error, LoginPayload>({
     mutationFn: async (data: LoginPayload) => {
-      const res = await request<User | Distributor>("/api/auth/Login", data, "post");
+      const res = await request<User>("/api/auth/Login", data, "post");
       return res.data;
     },
     retry: false,
@@ -19,10 +19,10 @@ export const useLogin = () => {
 };
 
 export const useGetUserInformation = (options?: any) => {
-  return useQuery<User | Distributor, Error>({
+  return useQuery<User, Error>({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await request<User | Distributor>("/api/auth/getUserInformation", {}, "get");
+      const res = await request<User>("/api/auth/getUserInformation", {}, "get");
       return res.data;
     },
     retry: false,

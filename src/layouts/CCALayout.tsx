@@ -1,55 +1,64 @@
-import { useState } from "react";
-import { Table, TableCaption, TableBody, TableCell, TableHead, TableHeader, TableRow, Pagination } from "../components/ui/Table";
+import React from "react";
+import { Outlet } from "react-router-dom";
+import SideBar, { type SideBarItems } from "../components/navigation/SideBar";
+
+import accounts from "../assets/icons/accounts.png";
+import dashboard from "../assets/icons/dashboard.png";
+import majorProd from "../assets/icons/major-prod.png";
+import groups from "../assets/icons/performing-groups.png";
+import seat from "../assets/icons/seat.png";
+import shows from "../assets/icons/shows.png";
+import Header from "../components/Header";
+
+const sideBarItems: SideBarItems[] = [
+  {
+    icon: dashboard,
+    name: "Dashboard",
+    path: "/",
+  },
+  {
+    icon: shows,
+    name: "Shows",
+    path: "/shows",
+  },
+  {
+    icon: majorProd,
+    name: "Major Production",
+    path: "/major-production",
+  },
+  {
+    icon: groups,
+    name: "Performing Groups",
+    path: "/performing-groups",
+  },
+  {
+    icon: accounts,
+    name: "Manage Accounts",
+    items: [
+      { name: "Trainer", path: "/manage/trainers" },
+      { name: "Distributor", path: "/manage/distributors" },
+      { name: "CCA Head", path: "/manage/cca-head" },
+      { name: "Account Request", path: "/manage/request" },
+    ],
+    path: "/manage/trainers",
+  },
+  {
+    icon: seat,
+    name: "Seat Map",
+    path: "/seat",
+  },
+];
+
 const CCALayout = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const data = Array.from({ length: 47 }, (_, i) => ({
-    id: i + 1,
-    name: `Item ${i + 1}`,
-    description: `Description for item ${i + 1}`,
-  }));
-
-  const rowsPerPage = 10;
-
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  const startIndex = (currentPage - 1) * rowsPerPage;
-  const currentData = data.slice(startIndex, startIndex + rowsPerPage);
-
   return (
-    <div className="p-6  bg-white rounded ">
-      <h1>
-        I am on CCA Module
-        <ul>
-          <li>Try /distributor</li>
-          <li>Try /customer</li>
-        </ul>
-      </h1>
-      <Table>
-        <TableCaption>
-          Items — Page {currentPage} of {totalPages}
-        </TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {currentData.map((item) => {
-            return (
-              <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.description}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-
-      <Pagination currentPage={currentPage} totalPage={totalPages} onPageChange={setCurrentPage} />
+    <div className="min-w-[800px] min-h-screen">
+      <Header />
+      <div className="flex h-[calc(100vh-120px)] pt-[120px]">
+        <SideBar items={sideBarItems} />
+        <div className="flex-grow overflow-x-auto" style={{ height: "calc(100vh - 120px)" }}>
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };

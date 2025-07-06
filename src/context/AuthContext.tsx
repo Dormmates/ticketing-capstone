@@ -1,12 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode, type SetStateAction } from "react";
 import { useGetUserInformation } from "../_lib/@react-client-query/auth";
-import type { Distributor, User } from "../types/user";
+import type { User } from "../types/user";
 
 type AuthContextData = {
-  user: User | Distributor | null;
-  setUser: React.Dispatch<SetStateAction<User | Distributor | null>>;
+  user: User | null;
+  setUser: React.Dispatch<SetStateAction<User | null>>;
   isLoadingUser: boolean;
-  isDistributor: boolean;
 };
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -24,7 +23,7 @@ interface Props {
 }
 
 const AuthContextProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<User | Distributor | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const { data, isSuccess, isLoading } = useGetUserInformation({
     enabled: user === null,
   });
@@ -35,9 +34,15 @@ const AuthContextProvider = ({ children }: Props) => {
     }
   }, [isSuccess, data]);
 
-  const isDistributor = user ? "distributorTypeId" in user : false;
+  if (user === null && isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <span>Loading...</span>
+      </div>
+    );
+  }
 
-  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading, isDistributor }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

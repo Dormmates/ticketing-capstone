@@ -1,5 +1,89 @@
-const SideBar = () => {
-  return <div>SideBar</div>;
+import { Link, useLocation } from "react-router-dom";
+import merge from "../../utils/merge";
+import { useState } from "react";
+import Button from "../ui/Button";
+
+import prev from "../../assets/icons/prev.png";
+import next from "../../assets/icons/next.png";
+
+export interface SideBarItems {
+  icon: string;
+  name: string;
+  items?: { name: string; path: string }[];
+  path: string;
+}
+
+interface SideBarProps {
+  items: SideBarItems[];
+  className?: string;
+}
+
+const SideBar = ({ items, className }: SideBarProps) => {
+  const [toggle, setToggle] = useState(true);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const location = useLocation();
+
+  const handleToggleSubmenu = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <aside className={`relative top-0 h-screen bg-white border-r border-lightGrey  ${toggle ? "w-[200px]" : "w-[80px]"} transition-all duration-300`}>
+      <button className="absolute top-2 -right-2 z-10 bg-white rounded-full" onClick={() => setToggle(!toggle)}>
+        {toggle ? <img src={prev} alt="close" className="w-7" /> : <img src={next} alt="open" className="w-7" />}
+      </button>
+
+      <div className={merge("flex flex-col gap-5 h-full transition-all duration-300 mt-16", toggle ? "items-start pl-4" : "items-center", className)}>
+        {items.map((item, index) => {
+          const isActive = location.pathname === item.path || (item.items && item.items.some((sub) => location.pathname === sub.path));
+
+          return (
+            <div key={index} className="w-full">
+              <div onClick={() => (item.items ? handleToggleSubmenu(index) : null)} className="cursor-pointer w-full">
+                <Link
+                  to={item.path}
+                  className={merge(
+                    "flex items-center gap-2 text-sm font-medium  w-full px-2 py-5 transition hover:opacity-80",
+                    isActive ? "bg-primaryTwo pointer-events-none" : "",
+                    toggle ? "justify-start" : "justify-center"
+                  )}
+                >
+                  {toggle ? (
+                    <div className="flex items-center gap-2">
+                      <img src={item.icon} alt={item.name} />
+                      <p>{item.name}</p>
+                    </div>
+                  ) : (
+                    <img src={item.icon} alt={item.name} />
+                  )}
+                </Link>
+              </div>
+
+              {toggle && item.items && openIndex === index && (
+                <div className="ml-6 mt-5 flex flex-col gap-5">
+                  {item.items.map((subItem, subIndex) => {
+                    const isSubActive = location.pathname === subItem.path;
+                    return (
+                      <Link
+                        key={subIndex}
+                        to={subItem.path}
+                        className={merge(
+                          "text-sm px-2 py-1 rounded hover:opacity-80 transition",
+                          isSubActive ? "font-bold pointer-events-none" : "text-gray-600"
+                        )}
+                      >
+                        {subItem.name}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </aside>
+  );
 };
 
 export default SideBar;

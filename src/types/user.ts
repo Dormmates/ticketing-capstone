@@ -6,10 +6,15 @@ export interface User {
   lastName: string;
   email: string;
   role: UserRole;
-}
 
-export interface Distributor extends User {
-  contactNumber: string;
-  departmentId: string | null;
-  distributorTypeId: number;
+  distributor: {
+    contactNumber: string;
+    department: { name: string; departmentId: string };
+    distributorTypeId: number;
+  }[];
+
+  department: {
+    departmentId: string;
+    name: string;
+  }[];
 }
