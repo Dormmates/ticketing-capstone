@@ -6,6 +6,7 @@ export type ButtonVariant = "primary" | "secondary" | "outline" | "danger" | "pl
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   loading?: boolean;
+  loadingMessage?: string;
   children: React.ReactNode;
 }
 
@@ -21,14 +22,22 @@ const variants: Record<ButtonVariant, string> = {
 
 const disabledStyles = "opacity-50 cursor-not-allowed";
 
-const Button = ({ variant = "primary", loading = false, children, disabled = false, className, ...props }: ButtonProps) => {
+const Button = ({
+  variant = "primary",
+  loading = false,
+  children,
+  disabled = false,
+  className,
+  loadingMessage = "Loading...",
+  ...props
+}: ButtonProps) => {
   return (
     <button
       className={merge(baseStyles, variants[variant], disabled || loading ? disabledStyles : "", className)}
       disabled={disabled || loading}
       {...props}
     >
-      {loading ? "Loading..." : children}
+      {loading ? loadingMessage : children}
     </button>
   );
 };

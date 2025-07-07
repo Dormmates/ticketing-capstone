@@ -6,12 +6,17 @@ import Dropdown from "../../../../components/ui/Dropdown";
 import Button from "../../../../components/ui/Button";
 import InputLabel from "../../../../components/ui/InputLabel";
 import { useAuthContext } from "../../../../context/AuthContext";
+import { useCreateShow } from "../../../../_lib/@react-client-query/show";
+import Modal from "../../../../components/ui/Modal";
+import { useNavigate } from "react-router-dom";
+
+import ToastNotification from "../../../../utils/toastNotification";
 
 // this should be fetched on the server
 const groups = [{ label: "SLU Dance Troupe", value: "12b1188a-92f2-4a7a-a382-fa911c2ab3d9" }];
 
 const productionType = [
-  { label: "Showcase", value: "showcase" },
+  { label: "Showcase", value: "showCase" },
   { label: "Major Concert", value: "majorConcert" },
 ];
 
@@ -23,6 +28,8 @@ const genres = Array.from({ length: 10 }, (_, i) => ({
 
 const CreateShow = () => {
   const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const createShow = useCreateShow();
   const [errors, setErrors] = useState<{
     title?: string;
     productionType?: string;
@@ -41,6 +48,9 @@ const CreateShow = () => {
     showImagePreview: "",
     image: null as File | null,
   });
+
+  const [showCreationSummary, setShowCreationSummary] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const validate = () => {
     const newErrors: typeof errors = {};
@@ -112,7 +122,49 @@ const CreateShow = () => {
 
   const handleSumbit = () => {
     if (!validate()) return;
-    alert("Form is valid. Ready to submit.");
+    setShowCreationSummary(true);
+  };
+
+  const confirmShowCreation = () => {
+    setIsUploading(true);
+
+    if (!user?.userId || !showData.productionType || !showData.image) {
+      alert("Missing required fields");
+      return;
+    }
+
+    const stringedGenre = showData.genre.join(", ");
+
+    createShow.mutate(
+      {
+        showTitle: showData.title,
+        description: showData.description,
+        department: showData.group,
+        genre: stringedGenre,
+        createdBy: user?.userId,
+        showType: showData.productionType,
+        image: showData.image,
+      },
+      {
+        onSuccess: (data) => {
+          setIsUploading(false);
+          setShowData({
+            title: "",
+            group: user?.department[0]?.departmentId || ("" as string | number),
+            productionType: "" as string | number,
+            description: "",
+            genre: [] as string[],
+            showImagePreview: "",
+            image: null as File | null,
+          });
+          ToastNotification.success(data.message);
+        },
+        onError: (err) => {
+          ToastNotification.error(err.message);
+          setIsUploading(false);
+        },
+      }
+    );
   };
 
   return (
@@ -126,6 +178,7 @@ const CreateShow = () => {
         <div className="flex mt-5 flex-col gap-5 lg:flex-row">
           <div className="flex gap-5 flex-col w-full">
             <TextInput
+              disabled={isUploading}
               isError={!!errors.title}
               errorMessage={errors.title}
               label="Show Title"
@@ -138,7 +191,7 @@ const CreateShow = () => {
               <Dropdown
                 isError={!!errors.group}
                 errorMessage={errors.group}
-                disabled={user?.role !== "head"}
+                disabled={user?.role !== "head" || isUploading}
                 className="w-full"
                 label="Performing Group"
                 options={groups}
@@ -146,6 +199,7 @@ const CreateShow = () => {
                 onChange={(value) => setShowData((prev) => ({ ...prev, group: value }))}
               />
               <Dropdown
+                disabled={isUploading}
                 isError={!!errors.productionType}
                 errorMessage={errors.productionType}
                 className="w-full"
@@ -157,6 +211,7 @@ const CreateShow = () => {
             </div>
 
             <TextArea
+              disabled={isUploading}
               label="Description"
               name="description"
               value={showData.description}
@@ -182,6 +237,7 @@ const CreateShow = () => {
                           X
                         </button>
                         <Dropdown
+                          disabled={isUploading}
                           isError={!showData.genre[index]}
                           className="w-full"
                           options={availableGenres}
@@ -192,7 +248,7 @@ const CreateShow = () => {
                     );
                   })}
                 </div>
-                <Button type="button" className="flex items-center w-5 h-5 !p-3 justify-center" onClick={addGenre}>
+                <Button disabled={isUploading} type="button" className="flex items-center w-5 h-5 !p-3 justify-center" onClick={addGenre}>
                   +
                 </Button>
               </div>
@@ -210,6 +266,7 @@ const CreateShow = () => {
               )}
 
               <input
+                disabled={isUploading}
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
@@ -235,9 +292,74 @@ const CreateShow = () => {
         </div>
       </ContentWrapper>
 
-      <Button onClick={handleSumbit} className="mt-10 self-end">
+      <Button disabled={isUploading} loading={isUploading} loadingMessage="Creating Show" onClick={handleSumbit} className="mt-10 self-end">
         Create Show
       </Button>
+
+      {showCreationSummary && (
+        <Modal title="Show Creation Summary" isOpen={showCreationSummary} onClose={() => setShowCreationSummary(false)}>
+          <ContentWrapper className="flex flex-col gap-10">
+            <div className="flex gap-10">
+              <div className="w-[200px] flex items-center justify-center">
+                <img className="object-cover min-w-[200px]" src={showData.showImagePreview} alt="Show Cover" />
+              </div>
+
+              <div className="grid gap-2">
+                <div className="grid grid-cols-[150px_auto] gap-2">
+                  <p className="text-lightGrey">Show Title</p>
+                  <p className="font-medium">{showData.title}</p>
+                </div>
+                <div className="grid grid-cols-[150px_auto] gap-2">
+                  <p className="text-lightGrey">Performing Group</p>
+                  <p className="font-medium">{groups.find((item) => item.value == showData.group)?.label}</p>
+                </div>
+                <div className="grid grid-cols-[150px_auto] gap-2">
+                  <p className="text-lightGrey">Show Type</p>
+                  <p className="font-medium">{productionType.find((item) => item.value == showData.productionType)?.label}</p>
+                </div>
+                <div className="grid grid-cols-[150px_auto] gap-2">
+                  <p className="text-lightGrey">Description</p>
+                  <p className="font-medium">{showData.description}</p>
+                </div>
+                <div className="grid grid-cols-[150px_auto] gap-2">
+                  <p className="text-lightGrey">Genre</p>
+                  <p className="font-medium">{showData.genre.join(", ")}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-5 self-end">
+              <Button
+                className="!bg-green"
+                onClick={() => {
+                  setShowCreationSummary(false);
+                  confirmShowCreation();
+                }}
+              >
+                Confirm
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  setShowData({
+                    title: "",
+                    group: user?.department[0]?.departmentId || ("" as string | number),
+                    productionType: "" as string | number,
+                    description: "",
+                    genre: [] as string[],
+                    showImagePreview: "",
+                    image: null as File | null,
+                  });
+
+                  navigate("/shows");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </ContentWrapper>
+        </Modal>
+      )}
     </ContentWrapper>
   );
 };
