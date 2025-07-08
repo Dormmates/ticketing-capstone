@@ -22,6 +22,8 @@ import AccountRequests from "../pages/modules/cca/accounts/AccountRequests";
 import SeatMap from "../pages/modules/cca/SeatMap";
 import DistributorHistory from "../pages/modules/distributor/DistributorHistory";
 import CreateShow from "../pages/modules/cca/shows/CreateShow";
+import AddSchedule from "../pages/modules/cca/shows/AddSchedule";
+import ViewShow from "../pages/modules/cca/shows/ViewShow";
 
 const AppRoute = () => {
   const { user } = useAuthContext();
@@ -44,8 +46,6 @@ const AppRoute = () => {
         element={
           !user ? (
             <Login />
-          ) : user.role === "distributor" ? (
-            <Navigate to="/distributor" />
           ) : (
             <ProtectedRoute allowedRoles={["head", "trainer"]}>
               <CCALayout />
@@ -56,6 +56,8 @@ const AppRoute = () => {
         <Route index element={<CCADashboard />} />
         <Route path="shows" element={<Shows />} />
         <Route path="shows/add" element={<CreateShow />} />
+        <Route path="shows/add/schedule/:id" element={<AddSchedule />} />
+        <Route path="shows/:id" element={<ViewShow />} />
         <Route path="major-production" element={<MajorProduction />} />
         <Route path="performing-groups" element={<PerformingGroups />} />
         <Route path="manage/trainers" element={<Trainers />} />

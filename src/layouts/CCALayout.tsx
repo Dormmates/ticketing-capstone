@@ -8,6 +8,7 @@ import groups from "../assets/icons/performing-groups.png";
 import seat from "../assets/icons/seat.png";
 import shows from "../assets/icons/shows.png";
 import Header from "../components/Header";
+import { useAuthContext } from "../context/AuthContext";
 
 const sideBarItems: SideBarItems[] = [
   {

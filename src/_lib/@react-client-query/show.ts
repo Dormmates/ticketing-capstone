@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
 
 interface NewShowPayload {
@@ -9,6 +9,25 @@ interface NewShowPayload {
   createdBy: string;
   showType: any;
   image: File;
+}
+
+export interface ShowData {
+  showId: string;
+  title: string;
+  description: string;
+  showType: "showCase" | "majorConcert" | "majorProduction";
+  departmentId: string;
+  department: {
+    departmentId: string;
+    name: string;
+    trainerId: string;
+  };
+  createdBy: string;
+  createdAt: string;
+  isArchived: boolean;
+  showCover: Uint8Array | Record<number, number>;
+  genreNames: string[];
+  showschedules: any[];
 }
 
 export const useCreateShow = () => {
@@ -24,6 +43,17 @@ export const useCreateShow = () => {
       formData.append("image", data.image);
 
       const res = await request<any>("/api/show", data, "postFormData");
+      return res.data;
+    },
+    retry: false,
+  });
+};
+
+export const useGetShow = (id: string) => {
+  return useQuery<ShowData, Error>({
+    queryKey: ["show", id],
+    queryFn: async () => {
+      const res = await request<ShowData>(`/api/show/${id}`, {}, "get");
       return res.data;
     },
     retry: false,
