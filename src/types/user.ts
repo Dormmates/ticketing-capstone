@@ -1,3 +1,5 @@
+import type { Department } from "./department";
+
 export type UserRole = "distributor" | "head" | "trainer";
 
 export interface User {
@@ -13,8 +15,5 @@ export interface User {
     distributortypes: { id: number; name: string };
   }[];
 
-  department: {
-    departmentId: string;
-    name: string;
-  }[];
+  department: Department[];
 }

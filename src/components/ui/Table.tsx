@@ -32,7 +32,7 @@ export const TableHead = ({ className, ...props }: ThHTMLAttributes<HTMLTableCel
 );
 
 export const TableCell = ({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) => (
-  <td className={merge("p-4 align-middle border-b border-tableBorderb first:border-l last:border-r", className)} {...props} />
+  <td className={merge("p-4 align-middle border-b border-tableBorderb", className)} {...props} />
 );
 
 export const TableCaption = ({ className, ...props }: HTMLAttributes<HTMLTableCaptionElement>) => (

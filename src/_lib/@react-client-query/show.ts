@@ -1,5 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
+import type { Department } from "../../types/department";
+import type { ShowType } from "../../types/show";
 
 interface NewShowPayload {
   showTitle: string;
@@ -11,7 +13,14 @@ interface NewShowPayload {
   image: File;
 }
 
-export interface ShowData {
+interface UseGetShowsParams {
+  page: number;
+  departmentId?: string;
+  showType?: ShowType;
+  search?: string;
+}
+
+interface ShowData {
   showId: string;
   title: string;
   description: string;
@@ -30,6 +39,21 @@ export interface ShowData {
   showschedules: any[];
 }
 
+interface ShowList {
+  shows: {
+    showId: string;
+    title: string;
+    showType: "showCase" | "majorConcert";
+    department: Department;
+  }[];
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+  totalMajorConcert: number;
+  totalShowCase: number;
+}
+
 export const useCreateShow = () => {
   return useMutation<any, Error, NewShowPayload>({
     mutationFn: async (data: NewShowPayload) => {
@@ -43,6 +67,17 @@ export const useCreateShow = () => {
       formData.append("image", data.image);
 
       const res = await request<any>("/api/show", data, "postFormData");
+      return res.data;
+    },
+    retry: false,
+  });
+};
+
+export const useGetShows = ({ page, departmentId, showType, search }: UseGetShowsParams) => {
+  return useQuery<ShowList, Error>({
+    queryKey: ["shows", page, departmentId, showType, search],
+    queryFn: async () => {
+      const res = await request<ShowList>(`/api/show`, { page, limit: 5, departmentId, showType, search }, "get");
       return res.data;
     },
     retry: false,
