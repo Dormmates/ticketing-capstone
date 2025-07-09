@@ -5,6 +5,7 @@ import { ContentWrapper } from "./layout/Wrapper";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 import TextInput, { PasswordInput } from "./ui/TextInput";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const { user } = useAuthContext();
@@ -44,7 +45,9 @@ const Header = () => {
     <header className="fixed top-0 left-0 w-full h-[120px] z-50 bg-white border-b border-lightGrey ">
       <ContentWrapper className="h-full flex justify-between items-center">
         <div className="gap-10  items-center flex">
-          <img className=" max-w-[150px] " src={logo} alt="cca logo" />
+          <Link to="/">
+            <img className=" max-w-[150px] " src={logo} alt="cca logo" />
+          </Link>
           <p className=" hidden sm:flex">CCCA Website</p>
         </div>
         <div className="flex gap-5 items-center">

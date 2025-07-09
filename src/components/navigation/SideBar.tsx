@@ -1,10 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import merge from "../../utils/merge";
 import { useState } from "react";
-import Button from "../ui/Button";
-
-import prev from "../../assets/icons/prev.png";
-import next from "../../assets/icons/next.png";
 
 export interface SideBarItems {
   icon: string;
@@ -24,18 +20,23 @@ const SideBar = ({ items, className }: SideBarProps) => {
   const location = useLocation();
 
   const handleToggleSubmenu = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+    setOpenIndex(index);
   };
 
   return (
-    <aside className={`relative top-0 h-screen bg-white border-r border-lightGrey  ${toggle ? "w-[200px]" : "w-[80px]"} transition-all duration-300`}>
-      <button className="absolute top-2 -right-2 z-10 bg-white rounded-full" onClick={() => setToggle(!toggle)}>
-        {toggle ? <img src={prev} alt="close" className="w-7" /> : <img src={next} alt="open" className="w-7" />}
+    <aside className={`relative top-0 h-screen bg-white border-r border-lightGrey ${toggle ? "w-[200px]" : "w-[80px]"} transition-all duration-300`}>
+      <button
+        className="absolute top-5 right-0 z-10 bg-primary font-bold text-xl text-white w-8 h-8 flex items-center justify-center rounded-sm"
+        onClick={() => setToggle(!toggle)}
+      >
+        {toggle ? <p>&#10094;</p> : <p>&#10095;</p>}
       </button>
 
       <div className={merge("flex flex-col gap-5 h-full transition-all duration-300 mt-16", toggle ? "items-start pl-4" : "items-center", className)}>
         {items.map((item, index) => {
-          const isActive = location.pathname === item.path || (item.items && item.items.some((sub) => location.pathname === sub.path));
+          const isActive =
+            (item.path === "/" ? location.pathname === "/" : location.pathname.startsWith(item.path + "/") || location.pathname === item.path) ||
+            (item.items && item.items.some((sub) => location.pathname === sub.path));
 
           return (
             <div key={index} className="w-full">
@@ -59,7 +60,7 @@ const SideBar = ({ items, className }: SideBarProps) => {
                 </Link>
               </div>
 
-              {toggle && item.items && openIndex === index && (
+              {toggle && item.items && openIndex === index && isActive && (
                 <div className="ml-6 mt-5 flex flex-col gap-5">
                   {item.items.map((subItem, subIndex) => {
                     const isSubActive = location.pathname === subItem.path;

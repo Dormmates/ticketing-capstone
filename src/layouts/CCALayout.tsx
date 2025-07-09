@@ -55,6 +55,7 @@ const CCALayout = () => {
       <Header />
       <div className="flex h-[calc(100vh-120px)] pt-[120px]">
         <SideBar items={sideBarItems} />
+
         <div className="flex-grow overflow-x-auto" style={{ height: "calc(100vh - 120px)" }}>
           <Outlet />
         </div>

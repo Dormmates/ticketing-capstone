@@ -1,8 +1,8 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 import InputLabel from "./InputLabel";
 
 interface TextInputProps {
-  label?: string;
+  label?: string | React.JSX.Element;
   name?: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
