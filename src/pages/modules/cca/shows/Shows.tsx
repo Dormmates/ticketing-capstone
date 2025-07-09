@@ -10,7 +10,6 @@ import { useGetDepartments } from "../../../../_lib/@react-client-query/departme
 import type { Department } from "../../../../types/department";
 import { useAuthContext } from "../../../../context/AuthContext";
 import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "../../../../hooks/useDeabounce";
 import type { ShowType } from "../../../../types/show";
 
@@ -35,7 +34,7 @@ const Shows = () => {
   const { user } = useAuthContext();
   const { data: showsData, isLoading: showsLoading } = useGetShows({
     page,
-    departmentId: user?.role == "trainer" ? user.department[0].departmentId : "",
+    departmentId: user?.role == "trainer" ? user.department[0].departmentId : (selectedDepartment as string),
     showType: showType as ShowType,
     search: debouncedSearch,
   });
@@ -52,10 +51,6 @@ const Shows = () => {
   if (!showsData || !departmentsData || !user) {
     return <h1>No Shows Fetched Error</h1>;
   }
-
-  const cleanedShow = showsData.shows
-    .filter((show) => (selectedDepartment !== "" ? show.department.departmentId == selectedDepartment : true))
-    .filter((show) => (showType !== "" ? show.showType == showType : true));
 
   return (
     <ContentWrapper className="lg:!p-20">
@@ -106,7 +101,7 @@ const Shows = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              cleanedShow.map((show, idx) => (
+              showsData.shows.map((show, idx) => (
                 <TableRow key={idx}>
                   <TableCell>{show.title}</TableCell>
                   <TableCell className="capitalize">{show.showType}</TableCell>
