@@ -33,7 +33,7 @@ const AuthContextProvider = ({ children }: Props) => {
     if (isSuccess && data) {
       setUser(data);
     }
-  }, []); //isSuccess, data
+  }, []);
 
   const isDistributor = user ? "distributorTypeId" in user : false;
 
