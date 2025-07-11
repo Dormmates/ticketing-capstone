@@ -1,3 +1,5 @@
+import type { Department } from "./department";
+
 export type UserRole = "distributor" | "head" | "trainer";
 
 export interface User {
@@ -6,10 +8,12 @@ export interface User {
   lastName: string;
   email: string;
   role: UserRole;
-}
 
-export interface Distributor extends User {
-  contactNumber: string;
-  departmentId: string | null;
-  distributorTypeId: number;
+  distributor: {
+    contactNumber: string;
+    department: { name: string; departmentId: string };
+    distributortypes: { id: number; name: string };
+  }[];
+
+  department: Department[];
 }

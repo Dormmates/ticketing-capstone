@@ -1,17 +1,20 @@
 import { PageWrapper, ContentWrapper } from "../components/layout/Wrapper";
 import logo from "../assets/images/cca-logo.png";
+import background from "../assets/images/background-login.png";
 import TextInput, { PasswordInput } from "../components/ui/TextInput";
 import { useState } from "react";
 import Button from "../components/ui/Button";
 import { Link } from "react-router-dom";
 import { useLogin } from "../_lib/@react-client-query/auth";
 import { useAuthContext } from "../context/AuthContext";
+import ToastNotification from "../utils/toastNotification";
 
 const Login = () => {
   const login = useLogin();
   const { setUser } = useAuthContext();
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loginError, setLoginError] = useState("");
+  const [logginIn, setLoggingIn] = useState(false);
 
   const [formContent, setFormContent] = useState({
     email: "",
@@ -41,30 +44,38 @@ const Login = () => {
 
     if (!validate()) return;
 
+    setLoggingIn(true);
     login.mutate(
       { ...formContent, expectedRole: "head" },
       {
         onSuccess: (data) => {
           setUser(data);
+          ToastNotification.success("Loggin Success");
+          setLoggingIn(false);
         },
+
         onError: (er) => {
           setLoginError(er.message);
+          ToastNotification.error("Failed to Login, Please Try again");
+          setLoggingIn(false);
         },
       }
     );
   };
 
   return (
-    <PageWrapper>
-      <ContentWrapper>
-        <div className="flex flex-col justify-center gap-10 items-center mx-auto w-full lg:max-w-[50%]">
+    <PageWrapper className="min-h-screen flex items-center justify-center w-full">
+      <img src={background} alt="" className="fixed inset-0 w-full h-full object-cover -z-10" />
+      <ContentWrapper className="w-full">
+        <div className="flex flex-col justify-center gap-10 items-center mx-auto w-full lg:max-w-[50%] h-full">
           <div>
-            <img src={logo} alt="CCA Logo" />
+            <img src={logo} alt="CCA Logo" className="object-cover" />
           </div>
-          <h1>Login</h1>
-          <h2>Welcome CCA Staff</h2>
+          <h1 className="font-bold text-4xl">CCA Trainer/Head Login</h1>
+          <h2 className="text-3xl text-center">Welcome CCA Staff</h2>
           <form className="w-full flex flex-col gap-5" onSubmit={submitForm}>
             <TextInput
+              disabled={logginIn}
               label="Email"
               name="email"
               value={formContent.email}
@@ -75,6 +86,7 @@ const Login = () => {
               errorMessage={errors.email}
             />
             <PasswordInput
+              disabled={logginIn}
               label="Password"
               name="password"
               value={formContent.password}
@@ -83,12 +95,12 @@ const Login = () => {
               isError={!!errors.password}
               errorMessage={errors.password}
             />
-            <Button className="w-full" type="submit">
+            <Button className="w-full" type="submit" disabled={logginIn} loadingMessage="Please Wait...">
               Login
             </Button>
             {loginError && <h1 className="mx-auto text-red">{loginError}</h1>}
-            <Link className="mx-auto hover:opacity-50 duration-500 ease-linear" to="/distributor/login">
-              I'm a distributor
+            <Link className="mx-auto hover:opacity-50 duration-500 ease-linear " to="/distributor/login">
+              I'm a distributor : <span className="text-blue-800 underline font-bold">Login as Distributor</span>
             </Link>
           </form>
         </div>

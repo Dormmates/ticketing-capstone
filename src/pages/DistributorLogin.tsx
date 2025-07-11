@@ -1,5 +1,6 @@
 import { PageWrapper, ContentWrapper } from "../components/layout/Wrapper";
 import logo from "../assets/images/cca-logo.png";
+import background from "../assets/images/background-login.png";
 import TextInput, { PasswordInput } from "../components/ui/TextInput";
 import { useState } from "react";
 import Button from "../components/ui/Button";
@@ -7,7 +8,6 @@ import { Link } from "react-router-dom";
 import Modal from "../components/ui/Modal";
 import Dropdown from "../components/ui/Dropdown";
 import { useLogin } from "../_lib/@react-client-query/auth";
-import type { Distributor } from "../types/user";
 import { useAuthContext } from "../context/AuthContext";
 
 const distributorOptions = [
@@ -71,14 +71,15 @@ const DistributorLogin = () => {
   };
 
   return (
-    <PageWrapper>
-      <ContentWrapper>
+    <PageWrapper className="min-h-screen flex items-center justify-center w-full">
+      <img src={background} alt="" className="fixed inset-0 w-full h-full object-cover -z-10" />
+      <ContentWrapper className="w-full">
         <div className="flex flex-col justify-center gap-10 items-center mx-auto w-full lg:max-w-[50%]">
           <div>
             <img src={logo} alt="CCA Logo" />
           </div>
-          <h1>Login</h1>
-          <h2>Welcome Distributor</h2>
+          <h1 className="font-bold text-4xl">Distributor Login</h1>
+          <h2 className="text-3xl text-center">Welcome Distributor</h2>
           <form className="w-full flex flex-col gap-5" onSubmit={submitForm}>
             <TextInput
               label="Email"
@@ -97,8 +98,8 @@ const DistributorLogin = () => {
             Request Distributor Account
           </Button>
           {loginError && <h1 className="mx-auto text-red">{loginError}</h1>}
-          <Link className="mx-auto hover:opacity-50 duration-500 ease-linear" to="/">
-            I'm a CCA Staff
+          <Link className="mx-auto hover:opacity-50 duration-500 ease-linear " to="/">
+            I'm a CCA Staff : <span className="text-blue-800 underline font-bold">Login as CCA Trainer or Head</span>
           </Link>
         </div>
 

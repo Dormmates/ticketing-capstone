@@ -1,8 +1,9 @@
+import type { JSX } from "react";
 import merge from "../../utils/merge";
 
 interface Props {
   className?: string;
-  label: string;
+  label: string | JSX.Element;
 }
 
 const InputLabel = ({ className = "", label }: Props) => {

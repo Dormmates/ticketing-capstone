@@ -1,8 +1,8 @@
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 import InputLabel from "./InputLabel";
 
 interface TextInputProps {
-  label?: string;
+  label?: string | React.JSX.Element;
   name?: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -87,6 +87,54 @@ export const PasswordInput = ({
       >
         {show ? "Hide" : "Show"}
       </button>
+      {isError && <p className="text-sm text-red mt-1">{errorMessage}</p>}
+    </div>
+  );
+};
+
+interface TextAreaProps {
+  label?: string;
+  name?: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  isError?: boolean;
+  errorMessage?: string;
+  className?: string;
+  disabled?: boolean;
+  required?: boolean;
+  rows?: number;
+}
+
+export const TextArea = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder = "",
+  isError = false,
+  errorMessage = "Invalid input",
+  className = "",
+  disabled = false,
+  required = true,
+  rows = 4,
+}: TextAreaProps) => {
+  return (
+    <div className={`w-full ${className}`}>
+      {label && <InputLabel label={label} />}
+      <textarea
+        required={required}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        disabled={disabled}
+        rows={rows}
+        className={`w-full border rounded px-4 py-2 shadow-sm outline-none resize-none
+          ${isError ? "border-red" : "border-lightGrey"}
+          ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
+          focus:border-primary`}
+      />
       {isError && <p className="text-sm text-red mt-1">{errorMessage}</p>}
     </div>
   );
