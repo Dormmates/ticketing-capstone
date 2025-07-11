@@ -1,7 +1,11 @@
-import React from "react";
+import SeatMapComponent from "../../../SeatMapComponent";
 
 const SeatMap = () => {
-  return <div>SeatMap</div>;
+  return (
+    <div>
+      <SeatMapComponent />
+    </div>
+  );
 };
 
 export default SeatMap;
