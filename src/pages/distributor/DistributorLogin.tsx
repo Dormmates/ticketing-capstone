@@ -1,25 +1,25 @@
-import { PageWrapper, ContentWrapper } from "../components/layout/Wrapper";
-import logo from "../assets/images/cca-logo.png";
-import background from "../assets/images/background-login.png";
-import TextInput, { PasswordInput } from "../components/ui/TextInput";
+import { PageWrapper, ContentWrapper } from "../../components/layout/Wrapper";
+import logo from "../../assets/images/cca-logo.png";
+import background from "../../assets/images/background-login.png";
+import TextInput, { PasswordInput } from "../../components/ui/TextInput";
 import { useState } from "react";
-import Button from "../components/ui/Button";
+import Button from "../../components/ui/Button";
 import { Link } from "react-router-dom";
-import Modal from "../components/ui/Modal";
-import Dropdown from "../components/ui/Dropdown";
-import { useLogin } from "../_lib/@react-client-query/auth";
-import { useAuthContext } from "../context/AuthContext";
+import Modal from "../../components/ui/Modal";
+import Dropdown from "../../components/ui/Dropdown";
+import { useLogin } from "../../_lib/@react-client-query/auth";
+import { useAuthContext } from "../../context/AuthContext";
 
 const distributorOptions = [
-  { label: "CCA Member", value: 1 },
-  { label: "Faculty", value: 2 },
-  { label: "Visitor", value: 3 },
+  { label: "CCA Member", value: "1" },
+  { label: "Faculty", value: "2" },
+  { label: "Visitor", value: "3" },
 ];
 
 const groups = [
-  { label: "Group 1", value: 1 },
-  { label: "Group 2", value: 2 },
-  { label: "Group 3", value: 3 },
+  { label: "Group 1", value: "1" },
+  { label: "Group 2", value: "2" },
+  { label: "Group 3", value: "3" },
 ];
 
 const DistributorLogin = () => {
@@ -38,8 +38,8 @@ const DistributorLogin = () => {
     lastName: "",
     email: "",
     contactNumber: "",
-    distributorType: "" as string | number,
-    group: "" as string | number,
+    distributorType: "",
+    group: "",
     password: "",
     confirmPassword: "",
   });
@@ -151,7 +151,7 @@ const DistributorLogin = () => {
                     onChange={(val) => setNewDistributor((prev) => ({ ...prev, distributorType: val }))}
                   />
 
-                  {newDistributor.distributorType === 1 && (
+                  {newDistributor.distributorType == "1" && (
                     <Dropdown
                       className="w-full"
                       label="Performing Group"
@@ -198,8 +198,8 @@ const DistributorLogin = () => {
                     lastName: "",
                     email: "",
                     contactNumber: "",
-                    distributorType: "" as string | number,
-                    group: "" as string | number,
+                    distributorType: "",
+                    group: "",
                     password: "",
                     confirmPassword: "",
                   });

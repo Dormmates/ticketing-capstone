@@ -1,15 +1,15 @@
-import { PageWrapper, ContentWrapper } from "../components/layout/Wrapper";
-import logo from "../assets/images/cca-logo.png";
-import background from "../assets/images/background-login.png";
-import TextInput, { PasswordInput } from "../components/ui/TextInput";
+import { PageWrapper, ContentWrapper } from "../../components/layout/Wrapper";
+import logo from "../../assets/images/cca-logo.png";
+import background from "../../assets/images/background-login.png";
+import TextInput, { PasswordInput } from "../../components/ui/TextInput";
 import { useState } from "react";
-import Button from "../components/ui/Button";
+import Button from "../../components/ui/Button";
 import { Link } from "react-router-dom";
-import { useLogin } from "../_lib/@react-client-query/auth";
-import { useAuthContext } from "../context/AuthContext";
-import ToastNotification from "../utils/toastNotification";
+import { useLogin } from "../../_lib/@react-client-query/auth";
+import { useAuthContext } from "../../context/AuthContext";
+import ToastNotification from "../../utils/toastNotification";
 
-const Login = () => {
+const CCALogin = () => {
   const login = useLogin();
   const { setUser } = useAuthContext();
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -109,4 +109,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default CCALogin;

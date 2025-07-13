@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { ContentWrapper } from "../../../../components/layout/Wrapper";
-import BreadCrumb from "../../../../components/ui/BreadCrumb";
-import TextInput, { TextArea } from "../../../../components/ui/TextInput";
-import Dropdown from "../../../../components/ui/Dropdown";
-import Button from "../../../../components/ui/Button";
-import InputLabel from "../../../../components/ui/InputLabel";
-import { useAuthContext } from "../../../../context/AuthContext";
-import { useCreateShow } from "../../../../_lib/@react-client-query/show";
-import Modal from "../../../../components/ui/Modal";
+import { ContentWrapper } from "../../../components/layout/Wrapper";
+import BreadCrumb from "../../../components/ui/BreadCrumb";
+import TextInput, { TextArea } from "../../../components/ui/TextInput";
+import Dropdown from "../../../components/ui/Dropdown";
+import Button from "../../../components/ui/Button";
+import InputLabel from "../../../components/ui/InputLabel";
+import { useAuthContext } from "../../../context/AuthContext";
+import { useCreateShow } from "../../../_lib/@react-client-query/show";
+import Modal from "../../../components/ui/Modal";
 import { useNavigate } from "react-router-dom";
 
-import ToastNotification from "../../../../utils/toastNotification";
+import ToastNotification from "../../../utils/toastNotification";
 
 // this should be fetched on the server
 const groups = [{ label: "SLU Dance Troupe", value: "12b1188a-92f2-4a7a-a382-fa911c2ab3d9" }];
@@ -41,8 +41,8 @@ const CreateShow = () => {
 
   const [showData, setShowData] = useState({
     title: "",
-    group: user?.department[0]?.departmentId || ("" as string | number),
-    productionType: "" as string | number,
+    group: user?.department[0]?.departmentId || "",
+    productionType: "",
     description: "",
     genre: [] as string[],
     showImagePreview: "",
@@ -150,8 +150,8 @@ const CreateShow = () => {
           setIsUploading(false);
           setShowData({
             title: "",
-            group: user?.department[0]?.departmentId || ("" as string | number),
-            productionType: "" as string | number,
+            group: user?.department[0]?.departmentId || "",
+            productionType: "",
             description: "",
             genre: [] as string[],
             showImagePreview: "",
@@ -343,8 +343,8 @@ const CreateShow = () => {
                 onClick={() => {
                   setShowData({
                     title: "",
-                    group: user?.department[0]?.departmentId || ("" as string | number),
-                    productionType: "" as string | number,
+                    group: user?.department[0]?.departmentId || "",
+                    productionType: "",
                     description: "",
                     genre: [] as string[],
                     showImagePreview: "",

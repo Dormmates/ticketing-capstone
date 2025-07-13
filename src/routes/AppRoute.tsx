@@ -2,28 +2,30 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import CCALayout from "../layouts/CCALayout";
 import DistributorLayout from "../layouts/DistributorLayout";
 
-import Login from "../pages/CCALogin";
 import { useAuthContext } from "../context/AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
-import DistributorDashboard from "../pages/modules/distributor/DistributorDashboard";
-import CCADashboard from "../pages/modules/cca/CCADashboard";
-import DistributorLogin from "../pages/DistributorLogin";
+import DistributorDashboard from "../pages/distributor/DistributorDashboard";
+import DistributorLogin from "../pages/distributor/DistributorLogin";
 import CustomerLayout from "../layouts/CustomerLayout";
-import CustomerHome from "../pages/modules/customer/CustomerHome";
+
 import Unauthorized from "../pages/Unauthorized";
 import NotFound from "../pages/NotFound";
-import Shows from "../pages/modules/cca/shows/Shows";
-import MajorProduction from "../pages/modules/cca/MajorProduction";
-import PerformingGroups from "../pages/modules/cca/PerformingGroups";
-import Trainers from "../pages/modules/cca/accounts/Trainers";
-import Distributors from "../pages/modules/cca/accounts/Distributors";
-import CCAHead from "../pages/modules/cca/accounts/CCAHead";
-import AccountRequests from "../pages/modules/cca/accounts/AccountRequests";
-import SeatMap from "../pages/modules/cca/SeatMap";
-import DistributorHistory from "../pages/modules/distributor/DistributorHistory";
-import CreateShow from "../pages/modules/cca/shows/CreateShow";
-import AddSchedule from "../pages/modules/cca/shows/AddSchedule";
-import ViewShow from "../pages/modules/cca/shows/ViewShow";
+import {
+  AccountRequests,
+  CCAHead,
+  Distributors,
+  Trainers,
+  CreateShow,
+  AddSchedule,
+  Shows,
+  ViewShow,
+  MajorProduction,
+  PerformingGroups,
+  SeatMap,
+  CCADashboard,
+  CCALogin,
+} from "../pages/cca/index";
+import DistributorHistory from "../pages/distributor/DistributorHistory";
 
 const AppRoute = () => {
   const { user } = useAuthContext();
@@ -45,7 +47,7 @@ const AppRoute = () => {
         path="/"
         element={
           !user ? (
-            <Login />
+            <CCALogin />
           ) : (
             <ProtectedRoute allowedRoles={["head", "trainer"]}>
               <CCALayout />
@@ -91,11 +93,6 @@ const AppRoute = () => {
         path="/distributor/login"
         element={user ? user.role === "distributor" ? <Navigate to="/distributor" /> : <Navigate to="/" /> : <DistributorLogin />}
       />
-
-      {/** Route for Customer*/}
-      <Route path="/customer" element={<CustomerLayout />}>
-        <Route index element={<CustomerHome />} />
-      </Route>
 
       {/** Other Routes*/}
       <Route path="/unathorized" element={<Unauthorized />} />

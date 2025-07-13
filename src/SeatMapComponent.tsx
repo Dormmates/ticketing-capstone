@@ -1,12 +1,30 @@
 import React, { useRef, useState } from "react";
 import { seatMap as seatMetaData } from "../seatdata.ts";
+import type { Seat } from "./types/seat.ts";
 
-const SeatMapComponent: React.FC = () => {
+interface Props {
+  seatClick: (seat: Seat) => void;
+  rowClick: (seats: Seat[]) => void;
+}
+
+const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [scale, setScale] = useState<number>(1);
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+  const [hoveredSeat, setHoveredSeat] = useState<null | Seat>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const handleMouseEnter = (e: React.MouseEvent<SVGRectElement>, seat: Seat, section: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+
+    console.log(rect);
+
+    setTooltipPos({ x: rect.x / 1.3 - 70, y: rect.bottom / 1.1 - 50 });
+    setHoveredSeat({ ...seat, section });
+  };
+
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [startPos, setStartPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
   const seatMap = seatMetaData;
 
@@ -90,19 +108,26 @@ const SeatMapComponent: React.FC = () => {
                   .map(Number);
                 const min = Math.min(...seatNumbers);
                 const max = Math.max(...seatNumbers);
-                const rowLabel = `${rowName}${min}-${max}`;
+                const rowLabel = `${rowName} ${min}-${max}`;
 
                 return (
                   <g key={`${sectionName}-${rowName}`} id={`${rowName}`}>
                     {/* Row label (to the left of the first seat) */}
-                    <text x={seats[0].x - 5} y={seats[0].y + 12} fontSize="10" textAnchor="end" fill="black">
+                    <text
+                      className="hover:underline cursor-pointer"
+                      onClick={() => rowClick(seats)}
+                      x={seats[0].x - 5}
+                      y={seats[0].y + 12}
+                      fontSize="10"
+                      textAnchor="end"
+                      fill="black"
+                    >
                       {rowLabel}
                     </text>
 
                     {/* Render seats */}
                     {seats.map((seat) => (
                       <rect
-                        key={seat.seatNumber}
                         id={seat.seatNumber}
                         x={seat.x}
                         y={seat.y}
@@ -111,7 +136,9 @@ const SeatMapComponent: React.FC = () => {
                         fill="white"
                         stroke="black"
                         className="hover:fill-blue-200 transition-colors cursor-pointer"
-                        onClick={() => console.log(`Selected seat: ${seat.seatNumber}`)}
+                        onClick={() => seatClick(seat)}
+                        onMouseEnter={(e) => handleMouseEnter(e, seat, sectionName)}
+                        onMouseLeave={() => setHoveredSeat(null)}
                       />
                     ))}
                   </g>
@@ -133,6 +160,23 @@ const SeatMapComponent: React.FC = () => {
             </g>
           ))}
         </svg>
+
+        {hoveredSeat && (
+          <div
+            className="absolute z-20 bg-white shadow-lg rounded px-2 py-1 text-xs border border-gray-300"
+            style={{
+              top: tooltipPos.y,
+              left: tooltipPos.x,
+              pointerEvents: "none",
+            }}
+          >
+            <div>
+              <strong>{hoveredSeat.seatNumber}</strong>
+            </div>
+            <div>Section: {hoveredSeat.section}</div>
+            <div>Price: ₱{hoveredSeat.ticketPrice ?? 0}</div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,17 +1,17 @@
-import { ContentWrapper } from "../../../../components/layout/Wrapper";
-import SimpleCard from "../../../../components/ui/SimpleCard";
-import Button from "../../../../components/ui/Button";
+import { ContentWrapper } from "../../../components/layout/Wrapper";
+import SimpleCard from "../../../components/ui/SimpleCard";
+import Button from "../../../components/ui/Button";
 import { Link } from "react-router-dom";
-import { useGetShows } from "../../../../_lib/@react-client-query/show";
+import { useGetShows } from "../../../_lib/@react-client-query/show";
 import { useMemo, useState } from "react";
-import TextInput from "../../../../components/ui/TextInput";
-import Dropdown from "../../../../components/ui/Dropdown";
-import { useGetDepartments } from "../../../../_lib/@react-client-query/department";
-import type { Department } from "../../../../types/department";
-import { useAuthContext } from "../../../../context/AuthContext";
-import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/Table";
-import { useDebounce } from "../../../../hooks/useDeabounce";
-import type { ShowType } from "../../../../types/show";
+import TextInput from "../../../components/ui/TextInput";
+import Dropdown from "../../../components/ui/Dropdown";
+import { useGetDepartments } from "../../../_lib/@react-client-query/department";
+import type { Department } from "../../../types/department";
+import { useAuthContext } from "../../../context/AuthContext";
+import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
+import { useDebounce } from "../../../hooks/useDeabounce";
+import type { ShowType } from "../../../types/show";
 
 const showTypes = [
   { label: "All Show Type", value: "" },
@@ -27,8 +27,8 @@ const parseDeparments = (departments: Department[]) => {
 
 const Shows = () => {
   const [page, setPage] = useState(1);
-  const [showType, setShowType] = useState("" as string | number);
-  const [selectedDepartment, setSelectedDepartment] = useState("" as string | number);
+  const [showType, setShowType] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 2000);
   const { user } = useAuthContext();

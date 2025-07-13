@@ -32,7 +32,7 @@ const AuthContextProvider = ({ children }: Props) => {
     if (isSuccess && data) {
       setUser(data);
     }
-  }, []);
+  }, [isLoading]);
 
   if (user === null && isLoading) {
     return (
@@ -43,7 +43,6 @@ const AuthContextProvider = ({ children }: Props) => {
   }
 
   return <AuthContext.Provider value={{ user, setUser, isLoadingUser: isLoading }}>{children}</AuthContext.Provider>;
-
 };
 
 export default AuthContextProvider;
