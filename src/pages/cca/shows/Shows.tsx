@@ -3,7 +3,7 @@ import SimpleCard from "../../../components/ui/SimpleCard";
 import Button from "../../../components/ui/Button";
 import { Link } from "react-router-dom";
 import { useGetShows } from "../../../_lib/@react-client-query/show";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import TextInput from "../../../components/ui/TextInput";
 import Dropdown from "../../../components/ui/Dropdown";
 import { useGetDepartments } from "../../../_lib/@react-client-query/department";
@@ -11,7 +11,8 @@ import type { Department } from "../../../types/department";
 import { useAuthContext } from "../../../context/AuthContext";
 import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { useDebounce } from "../../../hooks/useDeabounce";
-import type { ShowType } from "../../../types/show";
+
+const ITEMS_PER_PAGE = 5;
 
 const showTypes = [
   { label: "All Show Type", value: "" },
@@ -19,8 +20,8 @@ const showTypes = [
   { label: "Show Case", value: "showCase" },
 ];
 
-const parseDeparments = (departments: Department[]) => {
-  const data = departments.map((department) => ({ label: department.name, value: department.departmentId }));
+const parseDepartments = (departments: Department[]) => {
+  const data = departments.map((d) => ({ label: d.name, value: d.departmentId }));
   data.unshift({ label: "All Departments", value: "" });
   return data;
 };
@@ -30,36 +31,48 @@ const Shows = () => {
   const [showType, setShowType] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 2000);
+  const debouncedSearch = useDebounce(search, 500);
+
   const { user } = useAuthContext();
-  const { data: showsData, isLoading: showsLoading } = useGetShows({
-    page,
-    departmentId: user?.role == "trainer" ? user.department[0].departmentId : (selectedDepartment as string),
-    showType: showType as ShowType,
-    search: debouncedSearch,
-  });
+  const { data: showsData, isLoading: showsLoading } = useGetShows();
   const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartments();
 
   const departments = useMemo(() => {
-    return parseDeparments(departmentsData?.departments ?? []);
+    return parseDepartments(departmentsData?.departments ?? []);
   }, [departmentsData]);
 
-  if (showsLoading || departmentsLoading) {
-    return <h1>Loading</h1>;
-  }
+  const filteredShows = useMemo(() => {
+    if (!showsData?.shows) return [];
+    return showsData.shows.filter((show) => {
+      const matchTitle = show.title.toLowerCase().includes(debouncedSearch.toLowerCase());
+      const matchType = !showType || show.showType === showType;
+      const matchDepartment = !selectedDepartment || show.department.departmentId === selectedDepartment;
+      return matchTitle && matchType && matchDepartment;
+    });
+  }, [showsData?.shows, debouncedSearch, showType, selectedDepartment]);
 
-  if (!showsData || !departmentsData || !user) {
-    return <h1>No Shows Fetched Error</h1>;
-  }
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, selectedDepartment, showType]);
+
+  const paginatedShows = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const end = start + ITEMS_PER_PAGE;
+    return filteredShows.slice(start, end);
+  }, [filteredShows, page]);
+
+  if (showsLoading || departmentsLoading) return <h1>Loading...</h1>;
+  if (!showsData || !departmentsData || !user) return <h1>Error: No shows fetched.</h1>;
 
   return (
     <ContentWrapper className="lg:!p-20">
       <h1 className="text-3xl">Shows</h1>
+
       <div className="flex justify-between">
         <div className="flex gap-5 mt-10">
-          <SimpleCard label="Total Show" value={showsData.total} />
-          <SimpleCard className="border-l-red" label="Major Concert" value={showsData.totalMajorConcert} />
-          <SimpleCard className="border-l-orange-300" label="Show Case" value={showsData.totalShowCase} />
+          <SimpleCard label="Total Show" value={filteredShows.length} />
+          <SimpleCard className="border-l-red" label="Major Concert" value={filteredShows.filter((s) => s.showType === "majorConcert").length} />
+          <SimpleCard className="border-l-orange-300" label="Show Case" value={filteredShows.filter((s) => s.showType === "showCase").length} />
         </div>
         <Link className="self-end" to={"/shows/add"}>
           <Button className="text-black">Add New Show</Button>
@@ -94,15 +107,15 @@ const Shows = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {showsData.shows.length === 0 ? (
+            {paginatedShows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-10 text-gray-400">
                   No shows found.
                 </TableCell>
               </TableRow>
             ) : (
-              showsData.shows.map((show, idx) => (
-                <TableRow key={idx}>
+              paginatedShows.map((show) => (
+                <TableRow key={show.showId}>
                   <TableCell>{show.title}</TableCell>
                   <TableCell className="capitalize">{show.showType}</TableCell>
                   <TableCell>{show.department.name}</TableCell>
@@ -118,7 +131,7 @@ const Shows = () => {
         </Table>
 
         <div className="mt-5">
-          <Pagination currentPage={page} totalPage={showsData.totalPages} onPageChange={(newPage) => setPage(newPage)} />
+          <Pagination currentPage={page} totalPage={Math.ceil(filteredShows.length / ITEMS_PER_PAGE)} onPageChange={(newPage) => setPage(newPage)} />
         </div>
       </div>
     </ContentWrapper>

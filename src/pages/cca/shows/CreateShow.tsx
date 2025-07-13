@@ -11,9 +11,7 @@ import Modal from "../../../components/ui/Modal";
 import { useNavigate } from "react-router-dom";
 
 import ToastNotification from "../../../utils/toastNotification";
-
-// this should be fetched on the server
-const groups = [{ label: "SLU Dance Troupe", value: "12b1188a-92f2-4a7a-a382-fa911c2ab3d9" }];
+import { useGetDepartments } from "../../../_lib/@react-client-query/department";
 
 const productionType = [
   { label: "Showcase", value: "showCase" },
@@ -28,6 +26,8 @@ const genres = Array.from({ length: 10 }, (_, i) => ({
 
 const CreateShow = () => {
   const { user } = useAuthContext();
+  const { data: groups, isLoading: loadingDepartments, error: errorDepartment } = useGetDepartments();
+
   const navigate = useNavigate();
   const createShow = useCreateShow();
   const [errors, setErrors] = useState<{
@@ -167,6 +167,19 @@ const CreateShow = () => {
     );
   };
 
+  if (loadingDepartments) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (errorDepartment || !groups) {
+    return <h1>Server Error</h1>;
+  }
+
+  const groupOptions = (groups.departments ?? []).map((dept) => ({
+    label: dept.name,
+    value: dept.departmentId,
+  }));
+
   return (
     <ContentWrapper className="lg:!p-20 flex flex-col">
       <BreadCrumb backLink="/shows" items={[{ name: "Return", path: "" }]} />
@@ -194,7 +207,7 @@ const CreateShow = () => {
                 disabled={user?.role !== "head" || isUploading}
                 className="w-full"
                 label="Performing Group"
-                options={groups}
+                options={groupOptions}
                 value={showData.group}
                 onChange={(value) => setShowData((prev) => ({ ...prev, group: value }))}
               />
@@ -311,7 +324,7 @@ const CreateShow = () => {
                 </div>
                 <div className="grid grid-cols-[150px_auto] gap-2">
                   <p className="text-lightGrey">Performing Group</p>
-                  <p className="font-medium">{groups.find((item) => item.value == showData.group)?.label}</p>
+                  <p className="font-medium">{groupOptions.find((item) => item.value == showData.group)?.label}</p>
                 </div>
                 <div className="grid grid-cols-[150px_auto] gap-2">
                   <p className="text-lightGrey">Show Type</p>

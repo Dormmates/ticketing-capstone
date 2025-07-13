@@ -13,13 +13,6 @@ interface NewShowPayload {
   image: File;
 }
 
-interface UseGetShowsParams {
-  page: number;
-  departmentId?: string;
-  showType?: ShowType;
-  search?: string;
-}
-
 interface ShowData {
   showId: string;
   title: string;
@@ -46,12 +39,6 @@ interface ShowList {
     showType: "showCase" | "majorConcert";
     department: Department;
   }[];
-  limit: number;
-  page: number;
-  total: number;
-  totalPages: number;
-  totalMajorConcert: number;
-  totalShowCase: number;
 }
 
 export const useCreateShow = () => {
@@ -73,11 +60,11 @@ export const useCreateShow = () => {
   });
 };
 
-export const useGetShows = ({ page, departmentId, showType, search }: UseGetShowsParams) => {
+export const useGetShows = () => {
   return useQuery<ShowList, Error>({
-    queryKey: ["shows", page, departmentId, showType, search],
+    queryKey: ["shows"],
     queryFn: async () => {
-      const res = await request<ShowList>(`/api/show`, { page, limit: 5, departmentId, showType, search }, "get");
+      const res = await request<ShowList>(`/api/show`, {}, "get");
       return res.data;
     },
     retry: false,
