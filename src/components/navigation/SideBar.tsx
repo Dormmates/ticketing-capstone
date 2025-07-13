@@ -24,7 +24,11 @@ const SideBar = ({ items, className }: SideBarProps) => {
   };
 
   return (
-    <aside className={`relative top-0 h-screen bg-white border-r border-lightGrey ${toggle ? "w-[200px]" : "w-[80px]"} transition-all duration-300`}>
+    <aside
+      className={`relative top-0 h-screen bg-white border-r border-lightGrey ${
+        toggle ? "w-[200px]" : "w-[80px]"
+      } transition-all duration-300`}
+    >
       <button
         className="absolute top-5 right-0 z-10 bg-primary font-bold text-xl text-white w-8 h-8 flex items-center justify-center rounded-sm"
         onClick={() => setToggle(!toggle)}
@@ -32,10 +36,18 @@ const SideBar = ({ items, className }: SideBarProps) => {
         {toggle ? <p>&#10094;</p> : <p>&#10095;</p>}
       </button>
 
-      <div className={merge("flex flex-col gap-5 h-full transition-all duration-300 mt-16", toggle ? "items-start pl-4" : "items-center", className)}>
+      <div
+        className={merge(
+          "flex flex-col gap-5 h-full transition-all duration-300 mt-16",
+          toggle ? "items-start pl-4" : "items-center",
+          className
+        )}
+      >
         {items.map((item, index) => {
           const isActive =
-            (item.path === "/" ? location.pathname === "/" : location.pathname.startsWith(item.path + "/") || location.pathname === item.path) ||
+            (item.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(item.path + "/") || location.pathname === item.path) ||
             (item.items && item.items.some((sub) => location.pathname === sub.path));
 
           return (

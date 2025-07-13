@@ -25,6 +25,8 @@ import CreateShow from "../pages/modules/cca/shows/CreateShow";
 import AddSchedule from "../pages/modules/cca/shows/AddSchedule";
 import ViewShow from "../pages/modules/cca/shows/ViewShow";
 
+import ShowMenu from "../pages/modules/customer/ShowMenu";
+
 const AppRoute = () => {
   const { user } = useAuthContext();
 
@@ -103,8 +105,10 @@ const AppRoute = () => {
       />
 
       {/** Route for Customer*/}
+      {/* element={<CustomerHome /> */}
       <Route path="/customer" element={<CustomerLayout />}>
-        <Route index element={<CustomerHome />} />
+        <Route index element={<ShowMenu />} />
+        <Route path="/customer/show-menu" />
         <Route path="/customer/show/:showID" />
         <Route path="/customer/show/:showID/:showScheduleID" />
       </Route>
