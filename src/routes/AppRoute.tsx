@@ -89,12 +89,24 @@ const AppRoute = () => {
 
       <Route
         path="/distributor/login"
-        element={user ? user.role === "distributor" ? <Navigate to="/distributor" /> : <Navigate to="/" /> : <DistributorLogin />}
+        element={
+          user ? (
+            user.role === "distributor" ? (
+              <Navigate to="/distributor" />
+            ) : (
+              <Navigate to="/" />
+            )
+          ) : (
+            <DistributorLogin />
+          )
+        }
       />
 
       {/** Route for Customer*/}
       <Route path="/customer" element={<CustomerLayout />}>
         <Route index element={<CustomerHome />} />
+        <Route path="/customer/show/:showID" />
+        <Route path="/customer/show/:showID/:showScheduleID" />
       </Route>
 
       {/** Other Routes*/}

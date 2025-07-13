@@ -2,16 +2,14 @@ import error from "../assets/images/page-not-found.png";
 import errorIcon from "../assets/icons/error.png";
 import { ContentWrapper, PageWrapper } from "../components/layout/Wrapper";
 import Button from "../components/ui/Button";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const NotFound = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <PageWrapper>
-        <ContentWrapper>
-          <div className="flex flex-col justify-center items-center gap-2 md:flex-row mx-auto">
+        <ContentWrapper className="grid place-items-center m-0 h-dvh">
+          <div className="relative -top-8 flex flex-col justify-center items-center gap-2 md:flex-row">
             <img className="w-full max-w-[500px]" src={error} alt="error-image-404" />
             <div className="flex flex-col gap-4 max-w-[350px]">
               <div className="flex flex-row justify-center md:justify-start items-center gap-2">
@@ -23,7 +21,9 @@ const NotFound = () => {
                 Check that you typed the address correctly, go back to your previous page or try using our site to find
                 something specific
               </p>
-              <Button onClick={() => navigate("/")}>Return Home</Button>
+              <Link to="/">
+                <Button className="w-full">Return Home</Button>
+              </Link>
             </div>
           </div>
         </ContentWrapper>

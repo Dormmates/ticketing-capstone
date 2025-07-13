@@ -1,12 +1,12 @@
 import React from "react";
 import { ContentWrapper } from "../../../components/layout/Wrapper";
 
-const CustomerHome = () => {
+const ShowMenu = () => {
   return (
     <ContentWrapper>
-      <h1>Customer Home // Customer Landing Page</h1>
+      <h1>ShowMenu</h1>
     </ContentWrapper>
   );
 };
 
-export default CustomerHome;
+export default ShowMenu;
