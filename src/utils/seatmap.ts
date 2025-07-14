@@ -1,0 +1,18 @@
+import type { FlattenedSeatMap, SeatMap } from "../types/seat";
+
+export const flattenSeatMap = (seatMap: SeatMap): FlattenedSeatMap => {
+  return Object.entries(seatMap).flatMap(([section, rows]) =>
+    Object.entries(rows).flatMap(([row, seats]) =>
+      seats.map((seat) => ({
+        seatNumber: seat.seatNumber,
+        x: seat.x,
+        y: seat.y,
+        row,
+        section,
+        status: seat.status ?? "available",
+        ticketControlNumber: seat.ticketControlNumber ?? 0,
+        ticketPrice: seat.ticketPrice ?? 0,
+      }))
+    )
+  );
+};

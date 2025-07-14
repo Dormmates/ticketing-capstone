@@ -8,12 +8,10 @@ export interface User {
   lastName: string;
   email: string;
   role: UserRole;
-
-  distributor: {
+  distributor?: {
     contactNumber: string;
     department: { name: string; departmentId: string };
     distributortypes: { id: number; name: string };
-  }[];
-
-  department: Department[];
+  };
+  department?: Department;
 }

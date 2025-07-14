@@ -7,7 +7,7 @@ import Button from "../../../../components/ui/Button";
 import TextInput from "../../../../components/ui/TextInput";
 
 import SeatMapComponent from "../../../../SeatMapComponent";
-import type { Seat } from "../../../../types/seat";
+import type { FlattenedSeat } from "../../../../types/seat";
 import type { ErrorKeys, ScheduleFormData, ScheduleFormErrors } from "../../../../types/schedule";
 import ScheduleDateSelection from "./components/ScheduleDateSelection";
 import TicketTypeSelection from "./components/TicketTypeSelection";
@@ -15,6 +15,10 @@ import SeatingConfigurationSelector from "./components/SeatingConfigurationSelec
 import PricingSection from "./components/PricingSection";
 import { parseControlNumbers } from "../../../../utils/controlNumber";
 import TicketDetailsSection from "./components/TicketDetailsSection";
+
+import { seatMap } from "../../../../../seatdata";
+import { flattenSeatMap } from "../../../../utils/seatmap";
+import Modal from "../../../../components/ui/Modal";
 
 const formatLabel = (key: string) =>
   key
@@ -27,7 +31,7 @@ const formatLabel = (key: string) =>
 const AddSchedule = () => {
   const { id } = useParams();
   const { data, isLoading, isError, error } = useGetShow(id as string);
-
+  const [seatData, setSeatData] = useState(() => flattenSeatMap(seatMap));
   const [scheduleData, setScheduleData] = useState<ScheduleFormData>({
     dates: [{ date: new Date(), time: "" }],
     ticketType: "ticketed",
@@ -50,6 +54,11 @@ const AddSchedule = () => {
     balconyMiddle: "",
     balconyRight: "",
   });
+
+  const [selectedSeats, setSelectedSeats] = useState<FlattenedSeat[]>();
+  const [rowToggle, setRowToggle] = useState(false);
+  const [seatToggle, setSeatToggle] = useState(false);
+  const [controlNumberInput, setControlNumberInput] = useState("");
 
   const [errors, setErrors] = useState<ScheduleFormErrors>({});
 
@@ -100,14 +109,6 @@ const AddSchedule = () => {
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSectionedPrice((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSeatClick = (seat: Seat) => {
-    alert("Seat Clicked" + seat.seatNumber);
-  };
-
-  const handleRowClick = (seats: Seat[]) => {
-    alert("Seats Clicked" + seats);
   };
 
   const validate = () => {
@@ -300,7 +301,33 @@ const AddSchedule = () => {
           <TicketDetailsSection scheduleData={scheduleData} errors={errors} handleInputChange={handleInputChange} />
         )}
 
-        {scheduleData.seatingConfiguation == "controlledSeating" && <SeatMapComponent seatClick={handleSeatClick} rowClick={handleRowClick} />}
+        {scheduleData.seatingConfiguation == "controlledSeating" && (
+          <>
+            <SeatMapComponent
+              seatMap={seatData}
+              seatClick={(clickedSeat: FlattenedSeat) => {
+                setSelectedSeats([clickedSeat]);
+                setSeatToggle(true);
+              }}
+              rowClick={(clickedSeats: FlattenedSeat[]) => {
+                setSelectedSeats(clickedSeats);
+                setRowToggle(true);
+              }}
+            />
+
+            {seatToggle && (
+              <Modal title="Assign Ticket Control Number" onClose={() => setSeatToggle(false)} isOpen={seatToggle}>
+                <h1>Hello Seat</h1>
+              </Modal>
+            )}
+
+            {rowToggle && (
+              <Modal title="Assign Ticket Control Number" onClose={() => setRowToggle(false)} isOpen={rowToggle}>
+                <h1>Hello Seats</h1>
+              </Modal>
+            )}
+          </>
+        )}
 
         <Button className="w-fit self-end" onClick={handleSubmit}>
           Add Schedule

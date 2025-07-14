@@ -24,3 +24,12 @@ export const parseControlNumbers = (input: string): number[] => {
 
   return numbers;
 };
+
+export const parseSeat = (seat: string): { row: string; number: number } => {
+  const match = seat.match(/^([A-Z]+)(\d+)$/i);
+  if (!match) throw new Error(`Invalid seat format: ${seat}`);
+  return {
+    row: match[1].toUpperCase(),
+    number: parseInt(match[2], 10),
+  };
+};

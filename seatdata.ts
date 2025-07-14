@@ -1,12 +1,4 @@
-import type { Seat } from "./src/types/seat";
-
-interface Row {
-  [row: string]: Seat[];
-}
-
-interface SeatMap {
-  [section: string]: Row;
-}
+import type { SeatMap } from "./src/types/seat";
 
 export const seatMap: SeatMap = {
   orchestra_left: {

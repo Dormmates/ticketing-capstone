@@ -34,7 +34,7 @@ const Shows = () => {
   const debouncedSearch = useDebounce(search, 500);
 
   const { user } = useAuthContext();
-  const { data: showsData, isLoading: showsLoading } = useGetShows();
+  const { data: showsData, isLoading: showsLoading } = useGetShows(user?.role === "trainer" && user?.department ? user.department.departmentId : "");
   const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartments();
 
   const departments = useMemo(() => {
@@ -81,7 +81,7 @@ const Shows = () => {
 
       <div className="mt-10 flex gap-5">
         <TextInput
-          className="w-[450px] min-w-[450px]"
+          className="min-w-[450px] max-w-[450px]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search Show by Title"
@@ -90,7 +90,7 @@ const Shows = () => {
           disabled={user?.role !== "head"}
           className="min-w-[200px]"
           onChange={(value) => setSelectedDepartment(value)}
-          value={(user.role === "head" ? selectedDepartment : user.department[0].departmentId) as string}
+          value={user.role === "head" ? selectedDepartment : user?.department ? user.department.departmentId : ""}
           options={departments}
         />
         <Dropdown className="min-w-[200px]" onChange={(value) => setShowType(value)} value={showType} options={showTypes} />

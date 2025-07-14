@@ -1,38 +1,54 @@
 import React, { useRef, useState } from "react";
-import { seatMap as seatMetaData } from "../seatdata.ts";
-import type { Seat } from "./types/seat.ts";
+import { useOutletContext } from "react-router-dom";
+import type { FlattenedSeatMap, FlattenedSeat } from "./types/seat.ts";
 
 interface Props {
-  seatClick: (seat: Seat) => void;
-  rowClick: (seats: Seat[]) => void;
+  seatClick: (seat: FlattenedSeat) => void;
+  rowClick: (seats: FlattenedSeat[]) => void;
+  seatMap: FlattenedSeatMap;
 }
 
-const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
+const getSeatColor = (seat: FlattenedSeat) => {
+  switch (seat.status) {
+    case "vip":
+      return "#facc15"; // yellow
+    case "reserved":
+      return "#f87171"; // red
+    case "sold":
+      return "#9ca3af"; // gray
+    case "complimentarySeat":
+      return "#38bdf8"; // blue
+    case "available":
+    default:
+      return "#ffffff"; // white
+  }
+};
+
+type ContextType = { contentRef: React.RefObject<HTMLDivElement> };
+
+const SeatMapComponent = ({ seatClick, rowClick, seatMap }: Props) => {
+  const { contentRef } = useOutletContext<ContextType>();
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [scale, setScale] = useState(1);
-  const [hoveredSeat, setHoveredSeat] = useState<null | Seat>(null);
+  const [hoveredSeat, setHoveredSeat] = useState<null | FlattenedSeat>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-
-  const handleMouseEnter = (e: React.MouseEvent<SVGRectElement>, seat: Seat, section: string) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-
-    console.log(rect);
-
-    setTooltipPos({ x: rect.x / 1.3 - 70, y: rect.bottom / 1.1 - 50 });
-    setHoveredSeat({ ...seat, section });
-  };
-
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
-  const seatMap = seatMetaData;
+  const handleMouseEnter = (e: React.MouseEvent<SVGRectElement>, seat: FlattenedSeat) => {
+    const rect = e.currentTarget.getBoundingClientRect();
 
-  const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
-    e.preventDefault();
-    const delta = -e.deltaY;
-    const newScale = delta > 0 ? scale * 1.1 : scale * 0.9;
-    setScale(Math.min(Math.max(newScale, 0.5), 3));
+    const scrollY = contentRef?.current?.scrollTop ?? 0;
+    const height = tooltipRef?.current?.offsetHeight ?? 0;
+
+    setTooltipPos({
+      x: rect.x,
+      y: rect.y - scrollY / 10 + height,
+    });
+
+    setHoveredSeat(seat);
   };
 
   const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -49,18 +65,20 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
     });
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseLeave = () => setIsDragging(false);
   const resetView = () => {
     setScale(1);
     setPosition({ x: 0, y: 0 });
   };
+
+  // Group seats by section and then by row
+  const grouped = seatMap.reduce<Record<string, Record<string, FlattenedSeat[]>>>((acc, seat) => {
+    if (!acc[seat.section]) acc[seat.section] = {};
+    if (!acc[seat.section][seat.row]) acc[seat.section][seat.row] = [];
+    acc[seat.section][seat.row].push(seat);
+    return acc;
+  }, {});
 
   return (
     <div className="relative w-full h-[80vh] border border-gray-300 rounded-lg overflow-hidden">
@@ -88,31 +106,19 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
             transformOrigin: "0 0",
             cursor: isDragging ? "grabbing" : "grab",
           }}
-          onWheel={handleWheel}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
         >
-          {/* Render sections */}
-          {Object.entries(seatMap).map(([sectionName, rows]) => (
+          {Object.entries(grouped).map(([sectionName, rows]) => (
             <g key={sectionName} id={sectionName.replace(/\s+/g, "_")}>
-              {/* Render rows */}
               {Object.entries(rows).map(([rowName, seats]) => {
-                if (!seats.length) return null;
-
-                // Get seat range from seatNumber like "A1" and "A10"
-                const seatNumbers = seats
-                  .map((seat) => seat.seatNumber.match(/\d+/)?.[0])
-                  .filter(Boolean)
-                  .map(Number);
-                const min = Math.min(...seatNumbers);
-                const max = Math.max(...seatNumbers);
-                const rowLabel = `${rowName} ${min}-${max}`;
+                const seatNumbers = seats.map((s) => parseInt(s.seatNumber.match(/\d+/)?.[0] || "0"));
+                const rowLabel = `${rowName} ${Math.min(...seatNumbers)}-${Math.max(...seatNumbers)}`;
 
                 return (
-                  <g key={`${sectionName}-${rowName}`} id={`${rowName}`}>
-                    {/* Row label (to the left of the first seat) */}
+                  <g key={`${sectionName}-${rowName}`}>
                     <text
                       className="hover:underline cursor-pointer"
                       onClick={() => rowClick(seats)}
@@ -125,19 +131,19 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
                       {rowLabel}
                     </text>
 
-                    {/* Render seats */}
                     {seats.map((seat) => (
                       <rect
+                        key={seat.seatNumber}
                         id={seat.seatNumber}
                         x={seat.x}
                         y={seat.y}
                         width="14"
                         height="14"
-                        fill="white"
+                        fill={getSeatColor(seat)}
                         stroke="black"
                         className="hover:fill-blue-200 transition-colors cursor-pointer"
                         onClick={() => seatClick(seat)}
-                        onMouseEnter={(e) => handleMouseEnter(e, seat, sectionName)}
+                        onMouseEnter={(e) => handleMouseEnter(e, seat)}
                         onMouseLeave={() => setHoveredSeat(null)}
                       />
                     ))}
@@ -145,7 +151,6 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
                 );
               })}
 
-              {/* Section label – place it above the first row of the section */}
               {(() => {
                 const allSeats = Object.values(rows).flat();
                 if (allSeats.length === 0) return null;
@@ -163,7 +168,8 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
 
         {hoveredSeat && (
           <div
-            className="absolute z-20 bg-white shadow-lg rounded px-2 py-1 text-xs border border-gray-300"
+            ref={tooltipRef}
+            className="fixed z-20 bg-white shadow-lg rounded px-2 py-1 text-xs border border-gray-300"
             style={{
               top: tooltipPos.y,
               left: tooltipPos.x,
@@ -174,7 +180,9 @@ const SeatMapComponent = ({ seatClick, rowClick }: Props) => {
               <strong>{hoveredSeat.seatNumber}</strong>
             </div>
             <div>Section: {hoveredSeat.section}</div>
-            <div>Price: ₱{hoveredSeat.ticketPrice ?? 0}</div>
+            <div>Row: {hoveredSeat.row}</div>
+            <div>Price: ₱{hoveredSeat.ticketPrice.toFixed(2)}</div>
+            <div>Status: {hoveredSeat.status}</div>
           </div>
         )}
       </div>

@@ -8,7 +8,6 @@ import InputLabel from "../../../components/ui/InputLabel";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useCreateShow } from "../../../_lib/@react-client-query/show";
 import Modal from "../../../components/ui/Modal";
-import { useNavigate } from "react-router-dom";
 
 import ToastNotification from "../../../utils/toastNotification";
 import { useGetDepartments } from "../../../_lib/@react-client-query/department";
@@ -28,7 +27,6 @@ const CreateShow = () => {
   const { user } = useAuthContext();
   const { data: groups, isLoading: loadingDepartments, error: errorDepartment } = useGetDepartments();
 
-  const navigate = useNavigate();
   const createShow = useCreateShow();
   const [errors, setErrors] = useState<{
     title?: string;
@@ -41,7 +39,7 @@ const CreateShow = () => {
 
   const [showData, setShowData] = useState({
     title: "",
-    group: user?.department[0]?.departmentId || "",
+    group: user?.department?.departmentId || "",
     productionType: "",
     description: "",
     genre: [] as string[],
@@ -150,7 +148,7 @@ const CreateShow = () => {
           setIsUploading(false);
           setShowData({
             title: "",
-            group: user?.department[0]?.departmentId || "",
+            group: user?.department?.departmentId || "",
             productionType: "",
             description: "",
             genre: [] as string[],
@@ -356,15 +354,15 @@ const CreateShow = () => {
                 onClick={() => {
                   setShowData({
                     title: "",
-                    group: user?.department[0]?.departmentId || "",
+                    group: user?.department?.departmentId || "",
                     productionType: "",
                     description: "",
                     genre: [] as string[],
                     showImagePreview: "",
                     image: null as File | null,
                   });
-
-                  navigate("/shows");
+                  setShowCreationSummary(false);
+                  ToastNotification.info("Show Creation Canceled");
                 }}
               >
                 Cancel

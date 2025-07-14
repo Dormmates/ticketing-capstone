@@ -34,9 +34,7 @@ const SideBar = ({ items, className }: SideBarProps) => {
 
       <div className={merge("flex flex-col gap-5 h-full transition-all duration-300 mt-16", toggle ? "items-start pl-4" : "items-center", className)}>
         {items.map((item, index) => {
-          const isActive =
-            (item.path === "/" ? location.pathname === "/" : location.pathname.startsWith(item.path + "/") || location.pathname === item.path) ||
-            (item.items && item.items.some((sub) => location.pathname === sub.path));
+          const isActive = location.pathname === item.path;
 
           return (
             <div key={index} className="w-full">

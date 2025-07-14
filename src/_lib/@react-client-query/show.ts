@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
 import type { Department } from "../../types/department";
-import type { ShowType } from "../../types/show";
 
 interface NewShowPayload {
   showTitle: string;
@@ -60,11 +59,11 @@ export const useCreateShow = () => {
   });
 };
 
-export const useGetShows = () => {
+export const useGetShows = (departmentId?: string) => {
   return useQuery<ShowList, Error>({
     queryKey: ["shows"],
     queryFn: async () => {
-      const res = await request<ShowList>(`/api/show`, {}, "get");
+      const res = await request<ShowList>(`/api/show`, { departmentId }, "get");
       return res.data;
     },
     retry: false,

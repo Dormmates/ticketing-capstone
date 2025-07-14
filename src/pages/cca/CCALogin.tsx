@@ -46,7 +46,7 @@ const CCALogin = () => {
 
     setLoggingIn(true);
     login.mutate(
-      { ...formContent, expectedRole: "head" },
+      { ...formContent, expectedRole: "cca" },
       {
         onSuccess: (data) => {
           setUser(data);

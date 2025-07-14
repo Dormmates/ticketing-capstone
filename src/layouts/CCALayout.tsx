@@ -9,6 +9,7 @@ import seat from "../assets/icons/seat.png";
 import shows from "../assets/icons/shows.png";
 import Header from "../components/Header";
 import { useAuthContext } from "../context/AuthContext";
+import { useRef } from "react";
 
 const sideBarItems: SideBarItems[] = [
   {
@@ -50,14 +51,15 @@ const sideBarItems: SideBarItems[] = [
 ];
 
 const CCALayout = () => {
+  const contentRef = useRef<HTMLDivElement>(null);
   return (
     <div className="min-w-[800px] min-h-screen">
       <Header />
       <div className="flex h-[calc(100vh-120px)] pt-[120px]">
         <SideBar items={sideBarItems} />
 
-        <div className="flex-grow overflow-x-auto" style={{ height: "calc(100vh - 120px)" }}>
-          <Outlet />
+        <div ref={contentRef} className="flex-grow overflow-x-auto" style={{ height: "calc(100vh - 120px)" }}>
+          <Outlet context={{ contentRef }} />
         </div>
       </div>
     </div>

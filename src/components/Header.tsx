@@ -16,7 +16,7 @@ const Header = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-    contactNumber: user?.distributor.length !== 0 ? user?.distributor[0].contactNumber : "",
+    contactNumber: user?.distributor ? user.distributor.contactNumber : "",
   });
 
   const [openAccount, setOpenAccount] = useState(false);
@@ -29,7 +29,7 @@ const Header = () => {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
-      contactNumber: user?.distributor.length !== 0 ? user?.distributor[0].contactNumber : "",
+      contactNumber: user?.distributor ? user.distributor.contactNumber : "",
     });
 
     setOpenAccount(false);
@@ -77,7 +77,7 @@ const Header = () => {
               </div>
               <div className="flex gap-5">
                 <TextInput label="Email" value={userForm.email} onChange={handleInputChange} name="email" />
-                {user?.distributor.length !== 0 && (
+                {user?.distributor && (
                   <TextInput
                     label="Contact Number"
                     type="number"
@@ -87,21 +87,19 @@ const Header = () => {
                   />
                 )}
 
-                {user?.department[0]?.name && (
-                  <TextInput label="Group (Cannot Edit)" disabled={true} value={user.department[0].name} onChange={() => {}} />
-                )}
+                {user?.department?.name && <TextInput label="Group (Cannot Edit)" disabled={true} value={user.department.name} onChange={() => {}} />}
               </div>
 
-              {user?.distributor.length !== 0 && (
+              {user?.distributor && (
                 <div className="flex gap-5">
                   <TextInput
                     label="Distributor Type (Cannot Edit)"
                     disabled={true}
-                    value={user?.distributor[0].distributortypes.name + ""}
+                    value={user.distributor.distributortypes.name + ""}
                     onChange={() => {}}
                   />
-                  {user?.distributor[0].distributortypes.id === 2 && (
-                    <TextInput label="Department (Cannot Edit)" disabled={true} value={user.distributor[0].department.name} onChange={() => {}} />
+                  {user.distributor.distributortypes.id === 2 && (
+                    <TextInput label="Department (Cannot Edit)" disabled={true} value={user.distributor.department.name} onChange={() => {}} />
                   )}
                 </div>
               )}
