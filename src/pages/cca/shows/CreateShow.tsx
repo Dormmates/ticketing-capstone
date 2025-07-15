@@ -11,6 +11,7 @@ import Modal from "../../../components/ui/Modal";
 
 import ToastNotification from "../../../utils/toastNotification";
 import { useGetDepartments } from "../../../_lib/@react-client-query/department";
+import { useNavigate } from "react-router-dom";
 
 const productionType = [
   { label: "Showcase", value: "showCase" },
@@ -26,6 +27,7 @@ const genres = Array.from({ length: 10 }, (_, i) => ({
 const CreateShow = () => {
   const { user } = useAuthContext();
   const { data: groups, isLoading: loadingDepartments, error: errorDepartment } = useGetDepartments();
+  const navigate = useNavigate();
 
   const createShow = useCreateShow();
   const [errors, setErrors] = useState<{
@@ -155,7 +157,10 @@ const CreateShow = () => {
             showImagePreview: "",
             image: null as File | null,
           });
+
+          navigate(`/shows/add/schedule/${data.newShow.showId}`);
           ToastNotification.success(data.message);
+          ToastNotification.info("Please add a schedule for the created show", 5000);
         },
         onError: (err) => {
           ToastNotification.error(err.message);
@@ -272,7 +277,7 @@ const CreateShow = () => {
             <div className="flex flex-col gap-2">
               {showData.showImagePreview && (
                 <div className="h-full w-full border rounded border-lightGrey p-2">
-                  <img src={showData.showImagePreview} alt="Preview" className="object-cover object-center" />
+                  <img src={showData.showImagePreview} alt="Preview" className="object-cover object-center max-h-[500px]" />
                 </div>
               )}
 

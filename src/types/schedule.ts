@@ -4,13 +4,13 @@ export type SeatPricing = "fixed" | "sectionedPricing";
 
 export interface ScheduleDateTime {
   date: Date;
-  time?: string;
+  time: string;
 }
 
 export interface ScheduleFormData {
   dates: ScheduleDateTime[];
   ticketType: TicketType;
-  seatingConfiguation: SeatingConfiguration;
+  seatingConfiguration: SeatingConfiguration;
   seatPricing: SeatPricing;
   commisionFee: number | undefined;
   totalOrchestra: number | undefined;

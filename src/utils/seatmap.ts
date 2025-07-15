@@ -16,3 +16,7 @@ export const flattenSeatMap = (seatMap: SeatMap): FlattenedSeatMap => {
     )
   );
 };
+
+export const formatSectionName = (sectionName: string) => {
+  return sectionName.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\b\w/g, (char) => char.toUpperCase());
+};

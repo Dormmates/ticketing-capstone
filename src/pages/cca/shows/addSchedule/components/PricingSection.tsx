@@ -20,13 +20,13 @@ interface Props {
     balconyMiddle: string;
     balconyRight: string;
   };
-  setScheduleData: React.Dispatch<React.SetStateAction<ScheduleFormData>>;
-  setTicketPrice: (value: string) => void;
+  handleSeatPricingType: (value: SeatPricing) => void;
+  setTicketPrice: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors?: Partial<Record<ErrorKeys, string>>;
   handlePriceChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, setScheduleData, setTicketPrice, errors, handlePriceChange }: Props) => {
+const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, handleSeatPricingType, setTicketPrice, errors, handlePriceChange }: Props) => {
   return (
     <div>
       <Dropdown<SeatPricing>
@@ -34,20 +34,22 @@ const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, setSchedule
         label="Seat Pricing"
         value={scheduleData.seatPricing}
         className="mb-5"
-        onChange={(value) => setScheduleData((prev) => ({ ...prev, seatPricing: value }))}
+        onChange={handleSeatPricingType}
       />
 
       {scheduleData.seatPricing === "fixed" ? (
-        <TextInput
-          placeholder="PHP"
-          onChange={(e) => setTicketPrice(e.target.value)}
-          label="Ticket Price"
-          className="max-w-[250px]"
-          type="number"
-          isError={!!errors?.ticketPrice}
-          errorMessage={errors?.ticketPrice}
-          value={ticketPrice}
-        />
+        <div className="border border-lightGrey rounded-md w-fit p-5">
+          <TextInput
+            placeholder="PHP"
+            onChange={setTicketPrice}
+            label="Ticket Price"
+            className="max-w-[250px]"
+            type="number"
+            isError={!!errors?.ticketPrice}
+            errorMessage={errors?.ticketPrice}
+            value={ticketPrice}
+          />
+        </div>
       ) : (
         <div className="border border-lightGrey rounded-md w-full p-5">
           <div className="w-full flex flex-col gap-5">

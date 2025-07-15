@@ -1,7 +1,7 @@
 import type { SeatMap } from "./src/types/seat";
 
 export const seatMap: SeatMap = {
-  orchestra_left: {
+  orchestraLeft: {
     AA: [
       { seatNumber: "AA1", x: 164.5, y: 3.5 },
       { seatNumber: "AA2", x: 180.5, y: 3.5 },
@@ -135,7 +135,7 @@ export const seatMap: SeatMap = {
       { seatNumber: "I11", x: 276.5, y: 179.5 },
     ],
   },
-  orchestra_middle: {
+  orchestraMiddle: {
     AA: [
       { seatNumber: "AA9", x: 441.5, y: 4.5 },
       { seatNumber: "AA10", x: 457.5, y: 4.5 },
@@ -333,7 +333,7 @@ export const seatMap: SeatMap = {
       { seatNumber: "K8", x: 501.5, y: 230.5 },
     ],
   },
-  orchestra_right: {
+  orchestraRight: {
     AA: [
       { seatNumber: "AA18", x: 741.5, y: 0.5 },
       { seatNumber: "AA19", x: 757.5, y: 0.5 },
@@ -461,7 +461,7 @@ export const seatMap: SeatMap = {
       { seatNumber: "I30", x: 805.5, y: 179.5 },
     ],
   },
-  balcony_left: {
+  balconyLeft: {
     L: [
       { seatNumber: "L1", x: 49.5, y: 283.5 },
       { seatNumber: "L2", x: 65.5, y: 283.5 },
@@ -626,7 +626,7 @@ export const seatMap: SeatMap = {
       { seatNumber: "U10", x: 224.5, y: 427.5 },
     ],
   },
-  balcony_middle: {
+  balconyMiddle: {
     L: [
       { seatNumber: "L12", x: 375.5, y: 282.5 },
       { seatNumber: "L13", x: 391.5, y: 282.5 },
@@ -739,7 +739,7 @@ export const seatMap: SeatMap = {
       { seatNumber: "R27", x: 626.5, y: 378.5 },
     ],
   },
-  balcony_right: {
+  balconyRight: {
     L: [
       { seatNumber: "L23", x: 733.5, y: 282.5 },
       { seatNumber: "L24", x: 749.5, y: 282.5 },

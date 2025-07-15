@@ -15,11 +15,12 @@ interface Props {
 const SeatingConfigurationSelector = ({ scheduleData, setScheduleData }: Props) => {
   return (
     <Dropdown<SeatingConfiguration>
+      className="z-50"
       options={seatOptions}
       label="Seating Configuration"
-      value={scheduleData.seatingConfiguation}
+      value={scheduleData.ticketType === "nonTicketed" ? "freeSeating" : scheduleData.seatingConfiguration}
       disabled={scheduleData.ticketType === "nonTicketed"}
-      onChange={(value) => setScheduleData((prev) => ({ ...prev, seatingConfiguation: value }))}
+      onChange={(value) => setScheduleData((prev) => ({ ...prev, seatingConfiguration: value }))}
     />
   );
 };

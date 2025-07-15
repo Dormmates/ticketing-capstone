@@ -26,7 +26,7 @@ interface ShowData {
   createdBy: string;
   createdAt: string;
   isArchived: boolean;
-  showCover: Uint8Array | Record<number, number>;
+  showCover: string;
   genreNames: string[];
   showschedules: any[];
 }
@@ -37,6 +37,7 @@ interface ShowList {
     title: string;
     showType: "showCase" | "majorConcert";
     department: Department;
+    showCover: string;
   }[];
 }
 

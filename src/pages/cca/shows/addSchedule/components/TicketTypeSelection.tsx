@@ -15,6 +15,7 @@ interface Props {
 const TicketTypeSelection = ({ scheduleData, setScheduleData }: Props) => {
   return (
     <Dropdown<TicketType>
+      className="z-[999999]"
       options={ticketTypes}
       label="Ticket Type"
       value={scheduleData.ticketType}

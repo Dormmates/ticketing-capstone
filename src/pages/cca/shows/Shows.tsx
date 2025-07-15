@@ -11,6 +11,7 @@ import type { Department } from "../../../types/department";
 import { useAuthContext } from "../../../context/AuthContext";
 import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { useDebounce } from "../../../hooks/useDeabounce";
+import archiveIcon from "../../../assets/icons/archive.png";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -103,7 +104,7 @@ const Shows = () => {
               <TableHead>Title</TableHead>
               <TableHead>Show Type</TableHead>
               <TableHead>Department</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -116,13 +117,33 @@ const Shows = () => {
             ) : (
               paginatedShows.map((show) => (
                 <TableRow key={show.showId}>
-                  <TableCell>{show.title}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-start gap-5">
+                      <img className="w-14 h-14 object-cover object-center" src={show.showCover} alt="show image" />
+
+                      <p>{show.title}</p>
+                    </div>
+                  </TableCell>
                   <TableCell className="capitalize">{show.showType}</TableCell>
                   <TableCell>{show.department.name}</TableCell>
                   <TableCell className="text-right">
-                    <Link to={`/shows/${show.showId}`}>
-                      <Button variant="plain">View</Button>
-                    </Link>
+                    <div className="flex justify-end items-center gap-2">
+                      <Link to={`/shows/${show.showId}`}>
+                        <Button variant="primary" className="!bg-gray !text-black !border-lightGrey border-2">
+                          Go To Schedules
+                        </Button>
+                      </Link>
+                      <Button>Edit Details</Button>
+                      <div className="relative group">
+                        <Button variant="plain">
+                          <img src={archiveIcon} alt="archive" />
+                        </Button>
+
+                        <div className="absolute top-full mt-2 -left-11 hidden group-hover:flex  text-nowrap p-2 bg-zinc-700 text-white text-xs rounded shadow z-10 pointer-events-none">
+                          Archive Show
+                        </div>
+                      </div>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -134,6 +155,8 @@ const Shows = () => {
           <Pagination currentPage={page} totalPage={Math.ceil(filteredShows.length / ITEMS_PER_PAGE)} onPageChange={(newPage) => setPage(newPage)} />
         </div>
       </div>
+
+      <Button className="fixed bottom-10 right-10 shadow-lg rounded-full !text-black">View Archived Show</Button>
     </ContentWrapper>
   );
 };

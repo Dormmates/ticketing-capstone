@@ -6,9 +6,8 @@ import BreadCrumb from "../../../../components/ui/BreadCrumb";
 import Button from "../../../../components/ui/Button";
 import TextInput from "../../../../components/ui/TextInput";
 
-import SeatMapComponent from "../../../../SeatMapComponent";
 import type { FlattenedSeat } from "../../../../types/seat";
-import type { ErrorKeys, ScheduleFormData, ScheduleFormErrors } from "../../../../types/schedule";
+import type { ErrorKeys, ScheduleFormData, ScheduleFormErrors, SeatPricing } from "../../../../types/schedule";
 import ScheduleDateSelection from "./components/ScheduleDateSelection";
 import TicketTypeSelection from "./components/TicketTypeSelection";
 import SeatingConfigurationSelector from "./components/SeatingConfigurationSelector";
@@ -17,8 +16,11 @@ import { parseControlNumbers } from "../../../../utils/controlNumber";
 import TicketDetailsSection from "./components/TicketDetailsSection";
 
 import { seatMap } from "../../../../../seatdata";
-import { flattenSeatMap } from "../../../../utils/seatmap";
+import { flattenSeatMap, formatSectionName } from "../../../../utils/seatmap";
 import Modal from "../../../../components/ui/Modal";
+import SeatMapSchedule from "./components/SeatMapSchedule";
+import ToastNotification from "../../../../utils/toastNotification";
+import { useAddSchedule } from "../../../../_lib/@react-client-query/schedule";
 
 const formatLabel = (key: string) =>
   key
@@ -28,14 +30,24 @@ const formatLabel = (key: string) =>
     .replace("Balcony", "Balcony ")
     .trim();
 
+const getRowLabel = (seats: FlattenedSeat[] | undefined) => {
+  if (!seats || seats.length === 0) return "";
+  const rowName = seats[0].row;
+  const seatNumbers = seats.map((s) => parseInt(s.seatNumber.match(/\d+/)?.[0] || "0"));
+  const min = Math.min(...seatNumbers);
+  const max = Math.max(...seatNumbers);
+  return `Row: ${rowName} ${min} - ${max}`;
+};
+
 const AddSchedule = () => {
+  const addSchedule = useAddSchedule();
   const { id } = useParams();
   const { data, isLoading, isError, error } = useGetShow(id as string);
   const [seatData, setSeatData] = useState(() => flattenSeatMap(seatMap));
   const [scheduleData, setScheduleData] = useState<ScheduleFormData>({
     dates: [{ date: new Date(), time: "" }],
     ticketType: "ticketed",
-    seatingConfiguation: "freeSeating",
+    seatingConfiguration: "freeSeating",
     seatPricing: "fixed",
     commisionFee: undefined,
     totalOrchestra: undefined,
@@ -106,9 +118,56 @@ const AddSchedule = () => {
     setScheduleData((prev) => ({ ...prev, dates: updatedTime }));
   };
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeatPricingType = (value: SeatPricing) => {
+    setScheduleData((prev) => ({ ...prev, seatPricing: value }));
+
+    //clear errors
+    if (value === "fixed") {
+      setSectionedPrice({
+        orchestraLeft: "",
+        orchestraMiddle: "",
+        orchestraRight: "",
+        balconyLeft: "",
+        balconyMiddle: "",
+        balconyRight: "",
+      });
+
+      setErrors((prev) => ({
+        ...prev,
+        orchestraLeft: "",
+        orchestraMiddle: "",
+        orchestraRight: "",
+        balconyLeft: "",
+        balconyMiddle: "",
+        balconyRight: "",
+      }));
+    } else {
+      setTicketPrice("");
+      setErrors((prev) => ({
+        ...prev,
+        ticketPrice: "",
+      }));
+    }
+
+    //clear pricing
+    if (scheduleData.seatingConfiguration === "controlledSeating") {
+      setSeatData((prev) => prev?.map((seat) => ({ ...seat, ticketPrice: 0 })));
+    }
+  };
+
+  const handleSectionedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSectionedPrice((prev) => ({ ...prev, [name]: value }));
+
+    //update the price on the seat map
+    setSeatData((prev) => prev?.map((seat) => (seat.section === name ? { ...seat, ticketPrice: parseFloat(value) || 0 } : seat)));
+  };
+
+  const handleFixedPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTicketPrice(e.target.value);
+
+    //update the price on the seat map
+    setSeatData((prev) => prev?.map((seat) => ({ ...seat, ticketPrice: parseFloat(e.target.value) || 0 })));
   };
 
   const validate = () => {
@@ -230,7 +289,17 @@ const AddSchedule = () => {
   const handleSubmit = () => {
     if (!validate()) return;
 
-    alert("Can Now Add");
+    addSchedule.mutate(
+      { ...scheduleData, showId: data.showId },
+      {
+        onSuccess: () => {
+          ToastNotification.success("Added");
+        },
+        onError: (error) => {
+          ToastNotification.error(error.message);
+        },
+      }
+    );
   };
 
   return (
@@ -263,47 +332,47 @@ const AddSchedule = () => {
           <div>
             <TicketTypeSelection scheduleData={scheduleData} setScheduleData={setScheduleData} />
           </div>
-
-          <div>
-            <SeatingConfigurationSelector scheduleData={scheduleData} setScheduleData={setScheduleData} />
-          </div>
-
-          {scheduleData.ticketType == "ticketed" && (
-            <PricingSection
-              scheduleData={scheduleData}
-              ticketPrice={ticketPrice}
-              sectionedPrice={sectionedPrice}
-              setScheduleData={setScheduleData}
-              setTicketPrice={setTicketPrice}
-              errors={errors}
-              handlePriceChange={handlePriceChange}
-            />
-          )}
-
-          {scheduleData.ticketType == "ticketed" && (
-            <div>
-              <TextInput
-                placeholder="PHP"
-                onChange={handleInputChange}
-                label="Commission Fee"
-                className="max-w-[250px]"
-                type="number"
-                name="commisionFee"
-                value={scheduleData.commisionFee + ""}
-                isError={!!errors.commisionFee}
-                errorMessage={errors.commisionFee}
-              />
-            </div>
-          )}
         </div>
 
         {scheduleData.ticketType == "ticketed" && (
           <TicketDetailsSection scheduleData={scheduleData} errors={errors} handleInputChange={handleInputChange} />
         )}
 
-        {scheduleData.seatingConfiguation == "controlledSeating" && (
+        {scheduleData.ticketType == "ticketed" && (
+          <PricingSection
+            scheduleData={scheduleData}
+            ticketPrice={ticketPrice}
+            sectionedPrice={sectionedPrice}
+            handleSeatPricingType={handleSeatPricingType}
+            setTicketPrice={handleFixedPriceChange}
+            errors={errors}
+            handlePriceChange={handleSectionedPriceChange}
+          />
+        )}
+
+        {scheduleData.ticketType == "ticketed" && (
+          <div>
+            <TextInput
+              placeholder="PHP"
+              onChange={handleInputChange}
+              label="Commission Fee"
+              className="max-w-[250px]"
+              type="number"
+              name="commisionFee"
+              value={scheduleData.commisionFee + ""}
+              isError={!!errors.commisionFee}
+              errorMessage={errors.commisionFee}
+            />
+          </div>
+        )}
+
+        <div>
+          <SeatingConfigurationSelector scheduleData={scheduleData} setScheduleData={setScheduleData} />
+        </div>
+
+        {scheduleData.seatingConfiguration == "controlledSeating" && scheduleData.ticketType == "ticketed" && (
           <>
-            <SeatMapComponent
+            <SeatMapSchedule
               seatMap={seatData}
               seatClick={(clickedSeat: FlattenedSeat) => {
                 setSelectedSeats([clickedSeat]);
@@ -317,13 +386,21 @@ const AddSchedule = () => {
 
             {seatToggle && (
               <Modal title="Assign Ticket Control Number" onClose={() => setSeatToggle(false)} isOpen={seatToggle}>
-                <h1>Hello Seat</h1>
+                <div className="mt-5 bg-zinc-100 border border-darkGrey p-2">
+                  <p>Section: {formatSectionName(selectedSeats?.[0]?.section || "")}</p>
+                  <p>Seat Number: {selectedSeats?.[0]?.seatNumber}</p>
+                  <p>PHP {selectedSeats?.[0]?.ticketPrice?.toFixed(2) || "0.00"}</p>
+                </div>
               </Modal>
             )}
 
             {rowToggle && (
               <Modal title="Assign Ticket Control Number" onClose={() => setRowToggle(false)} isOpen={rowToggle}>
-                <h1>Hello Seats</h1>
+                <div className="mt-5 bg-zinc-100 border border-darkGrey p-2">
+                  <p>Section: {formatSectionName(selectedSeats?.[0]?.section || "")}</p>
+                  <p>{getRowLabel(selectedSeats)}</p>
+                  <p>PHP {selectedSeats?.[0]?.ticketPrice?.toFixed(2) || "0.00"}</p>
+                </div>
               </Modal>
             )}
           </>

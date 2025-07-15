@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import type { FlattenedSeatMap, FlattenedSeat } from "./types/seat.ts";
+import type { FlattenedSeatMap, FlattenedSeat } from "../../../../../types/seat.ts";
+import { formatSectionName } from "../../../../../utils/seatmap.ts";
 
 interface Props {
   seatClick: (seat: FlattenedSeat) => void;
@@ -26,7 +27,7 @@ const getSeatColor = (seat: FlattenedSeat) => {
 
 type ContextType = { contentRef: React.RefObject<HTMLDivElement> };
 
-const SeatMapComponent = ({ seatClick, rowClick, seatMap }: Props) => {
+const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
   const { contentRef } = useOutletContext<ContextType>();
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -179,7 +180,7 @@ const SeatMapComponent = ({ seatClick, rowClick, seatMap }: Props) => {
             <div>
               <strong>{hoveredSeat.seatNumber}</strong>
             </div>
-            <div>Section: {hoveredSeat.section}</div>
+            <div>Section: {formatSectionName(hoveredSeat.section)}</div>
             <div>Row: {hoveredSeat.row}</div>
             <div>Price: ₱{hoveredSeat.ticketPrice.toFixed(2)}</div>
             <div>Status: {hoveredSeat.status}</div>
@@ -190,4 +191,4 @@ const SeatMapComponent = ({ seatClick, rowClick, seatMap }: Props) => {
   );
 };
 
-export default SeatMapComponent;
+export default SeatMapSchedule;
