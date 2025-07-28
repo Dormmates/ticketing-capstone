@@ -139,7 +139,7 @@ const Shows = () => {
                           <img src={archiveIcon} alt="archive" />
                         </Button>
 
-                        <div className="absolute top-full mt-2 -left-11 hidden group-hover:flex  text-nowrap p-2 bg-zinc-700 text-white text-xs rounded shadow z-10 pointer-events-none">
+                        <div className="absolute  -left-20 top-0 hidden group-hover:flex  text-nowrap p-2 bg-zinc-700 text-white text-xs rounded shadow z-10 pointer-events-none">
                           Archive Show
                         </div>
                       </div>

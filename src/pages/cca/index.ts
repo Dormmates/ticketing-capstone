@@ -8,6 +8,9 @@ import AddSchedule from "./shows/addSchedule/AddSchedule";
 import Shows from "./shows/Shows";
 import ViewShow from "./shows/ViewShow";
 
+import ViewShowScheduleLayout from "./shows/schedules/ViewShowScheduleLayout";
+import ScheduleSummary from "./shows/schedules/pages/ScheduleSummary";
+
 import MajorProduction from "./MajorProduction";
 import PerformingGroups from "./PerformingGroups";
 import SeatMap from "./SeatMap";
@@ -29,4 +32,6 @@ export {
   PerformingGroups,
   SeatMap,
   CCADashboard,
+  ViewShowScheduleLayout,
+  ScheduleSummary,
 };

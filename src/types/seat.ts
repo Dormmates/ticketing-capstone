@@ -28,6 +28,7 @@ export interface FlattenedSeat {
   status: SeatStatus;
   ticketControlNumber: number;
   ticketPrice: number;
+  isComplimentary: boolean;
 }
 
 export type FlattenedSeatMap = FlattenedSeat[];

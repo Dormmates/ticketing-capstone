@@ -4,7 +4,7 @@ import InputLabel from "./InputLabel";
 interface TextInputProps {
   label?: string | React.JSX.Element;
   name?: string;
-  value: string;
+  value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   type?: string;

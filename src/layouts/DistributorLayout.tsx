@@ -9,12 +9,12 @@ const sideBarItems: SideBarItems[] = [
   {
     icon: dashboard,
     name: "Dashboard",
-    path: "/distributor",
+    path: "/",
   },
   {
     icon: history,
     name: "History",
-    path: "/distributor/history",
+    path: "/history",
   },
 ];
 

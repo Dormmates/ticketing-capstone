@@ -3,8 +3,18 @@ import { request } from "../api";
 
 import type { ScheduleFormData, SeatingConfiguration, TicketType } from "../../types/schedule";
 
-interface AddSchedulePayload extends ScheduleFormData {
+export interface AddSchedulePayload extends ScheduleFormData {
   showId: string;
+  controlNumbers?: { orchestra: number[]; balcony: number[]; complimentary: number[] };
+  ticketPrice?: number;
+  sectionedPrice?: {
+    orchestraLeft: number;
+    orchestraMiddle: number;
+    orchestraRight: number;
+    balconyLeft: number;
+    balconyMiddle: number;
+    balconyRight: number;
+  };
 }
 
 interface ShowSchedule {

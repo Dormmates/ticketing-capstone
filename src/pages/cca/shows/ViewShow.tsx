@@ -1,8 +1,14 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetShow } from "../../../_lib/@react-client-query/show";
 import { ContentWrapper } from "../../../components/layout/Wrapper";
 import BreadCrumb from "../../../components/ui/BreadCrumb";
 import { useGetShowSchedules } from "../../../_lib/@react-client-query/schedule";
+import SimpleCard from "../../../components/ui/SimpleCard";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
+import { formatToReadableDate, formatToReadableTime } from "../../../utils/date";
+import Button from "../../../components/ui/Button";
+import Dropdown from "../../../components/ui/Dropdown";
+import deleteIcon from "../../../assets/icons/delete.png";
 
 const ViewShow = () => {
   const { id } = useParams();
@@ -13,7 +19,7 @@ const ViewShow = () => {
     return <div>Loading...</div>;
   }
 
-  if (isShowError || isSchedulesError) {
+  if (isShowError || isSchedulesError || !showSchedules || !show) {
     return (
       <div className="text-red-500">
         {isShowError && <p>Failed to load show: {showError?.message}</p>}
@@ -53,7 +59,75 @@ const ViewShow = () => {
         </div>
 
         <div className="mt-10">
-          <h1 className="font-semibold text-2xl ">Show Schedule</h1>
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-5">
+              <h1 className="font-semibold text-2xl ">Show Schedule</h1>
+              <SimpleCard value={showSchedules.schedules.length + ""} label="Total" />
+            </div>
+            <Link className="self-end" to={`/shows/add/schedule/${id}`}>
+              <Button>Add New Schedule</Button>
+            </Link>
+          </div>
+
+          <div className="mt-10">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Schedule Status</TableHead>
+                  <TableHead className="text-center pl-60">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {showSchedules.schedules.length == 0 ? (
+                  <TableRow>
+                    <TableCell>No Schedules</TableCell>
+                  </TableRow>
+                ) : (
+                  showSchedules.schedules.map((schedule) => (
+                    <TableRow>
+                      <TableCell>{formatToReadableDate(schedule.datetime)}</TableCell>
+                      <TableCell>{formatToReadableTime(schedule.datetime)}</TableCell>
+                      <TableCell>
+                        {schedule.isOpen ? (
+                          <div className="flex items-center gap-2">
+                            <div className="bg-green w-3 h-3 rounded-full"></div>
+                            <p>Open</p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <div className="bg-red w-3 h-3 rounded-full"></div>
+                            <p>Closed</p>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2 justify-end items-center ">
+                          <Link to={`/schedule/${schedule.scheduleId}`}>
+                            <Button className="!bg-gray !border-darkGrey !border-2 !text-black" disabled={!schedule.isOpen}>
+                              Go To Schedule
+                            </Button>
+                          </Link>
+                          <Dropdown
+                            value="Options"
+                            options={[
+                              { label: "Reschedule", onClick: () => alert("Reschedule Show") },
+                              { label: schedule.isOpen ? "Close Schedule" : "Open Schedule", onClick: () => alert("Handle Schedule") },
+                            ]}
+                          />
+                          <Button variant="plain" disabled={schedule.isOpen}>
+                            <img src={deleteIcon} alt="delete" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </ContentWrapper>

@@ -12,7 +12,7 @@ export interface ScheduleFormData {
   ticketType: TicketType;
   seatingConfiguration: SeatingConfiguration;
   seatPricing: SeatPricing;
-  commisionFee: number | undefined;
+  commissionFee: number | undefined;
   totalOrchestra: number | undefined;
   totalBalcony: number | undefined;
   totalComplimentary: number | undefined;

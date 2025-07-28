@@ -1,7 +1,7 @@
 import React from "react";
 import merge from "../../utils/merge.ts";
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "danger" | "plain";
+export type ButtonVariant = "primary" | "outline" | "danger" | "plain";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -14,7 +14,6 @@ const baseStyles = "px-4 py-2 rounded-md text-white font-medium transition durat
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-primary hover:opacity-50",
-  secondary: "bg-gray-600  hover:bg-gray-700",
   danger: "bg-red hover:opacity-50",
   outline: "bg-transparent !text-black  border border-black hover:opacity-50",
   plain: "hover:opacity-50",

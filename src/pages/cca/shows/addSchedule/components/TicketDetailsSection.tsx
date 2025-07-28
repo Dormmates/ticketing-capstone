@@ -73,9 +73,10 @@ const TicketDetailsSection = ({ scheduleData, handleInputChange, errors }: Props
             placeholder="eg. 1-250"
             className="w-full min-w-[300px]"
             name="orchestraControlNumber"
-            value={scheduleData.orchestraControlNumber}
+            value={!scheduleData.totalOrchestra ? "" : scheduleData.orchestraControlNumber}
             isError={!!errors?.orchestraControlNumber}
             errorMessage={errors?.orchestraControlNumber}
+            disabled={!scheduleData.totalOrchestra}
           />
 
           <TextInput
@@ -88,9 +89,10 @@ const TicketDetailsSection = ({ scheduleData, handleInputChange, errors }: Props
             placeholder="eg. 251-500"
             className="w-full min-w-[300px]"
             name="balconyControlNumber"
-            value={scheduleData.balconyControlNumber}
+            value={!scheduleData.totalBalcony ? "" : scheduleData.balconyControlNumber}
             isError={!!errors?.balconyControlNumber}
             errorMessage={errors?.balconyControlNumber}
+            disabled={!scheduleData.totalBalcony}
           />
 
           <TextInput
@@ -103,9 +105,10 @@ const TicketDetailsSection = ({ scheduleData, handleInputChange, errors }: Props
             placeholder="eg. 501-750"
             className="w-full min-w-[300px]"
             name="complimentaryControlNumber"
-            value={scheduleData.complimentaryControlNumber}
+            value={!scheduleData.totalComplimentary ? "" : scheduleData.complimentaryControlNumber}
             isError={!!errors?.complimentaryControlNumber}
             errorMessage={errors?.complimentaryControlNumber}
+            disabled={!scheduleData.totalComplimentary}
           />
         </div>
       </div>

@@ -14,7 +14,7 @@ const CCALogin = () => {
   const { setUser } = useAuthContext();
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loginError, setLoginError] = useState("");
-  const [logginIn, setLoggingIn] = useState(false);
+  const [loginIn, setLoggingIn] = useState(false);
 
   const [formContent, setFormContent] = useState({
     email: "",
@@ -75,7 +75,7 @@ const CCALogin = () => {
           <h2 className="text-3xl text-center">Welcome CCA Staff</h2>
           <form className="w-full flex flex-col gap-5" onSubmit={submitForm}>
             <TextInput
-              disabled={logginIn}
+              disabled={loginIn}
               label="Email"
               name="email"
               value={formContent.email}
@@ -86,7 +86,7 @@ const CCALogin = () => {
               errorMessage={errors.email}
             />
             <PasswordInput
-              disabled={logginIn}
+              disabled={loginIn}
               label="Password"
               name="password"
               value={formContent.password}
@@ -95,7 +95,7 @@ const CCALogin = () => {
               isError={!!errors.password}
               errorMessage={errors.password}
             />
-            <Button className="w-full" type="submit" disabled={logginIn} loadingMessage="Please Wait...">
+            <Button className="w-full" type="submit" disabled={loginIn} loadingMessage="Please Wait...">
               Login
             </Button>
             {loginError && <h1 className="mx-auto text-red">{loginError}</h1>}

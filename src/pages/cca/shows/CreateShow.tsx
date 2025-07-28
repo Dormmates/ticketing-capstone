@@ -12,14 +12,14 @@ import Modal from "../../../components/ui/Modal";
 import ToastNotification from "../../../utils/toastNotification";
 import { useGetDepartments } from "../../../_lib/@react-client-query/department";
 import { useNavigate } from "react-router-dom";
+import { useGetGenres } from "../../../_lib/@react-client-query/genre";
 
 const productionType = [
   { label: "Showcase", value: "showCase" },
   { label: "Major Concert", value: "majorConcert" },
 ];
 
-//this should be fetched on the server
-const genres = Array.from({ length: 10 }, (_, i) => ({
+const genres123 = Array.from({ length: 10 }, (_, i) => ({
   label: `${i + 1}`,
   value: `${i + 1}`,
 }));
@@ -28,6 +28,7 @@ const CreateShow = () => {
   const { user } = useAuthContext();
   const { data: groups, isLoading: loadingDepartments, error: errorDepartment } = useGetDepartments();
   const navigate = useNavigate();
+  const { data: genres, isLoading: loadingGenres, error: errorGenres } = useGetGenres();
 
   const createShow = useCreateShow();
   const [errors, setErrors] = useState<{
@@ -170,17 +171,22 @@ const CreateShow = () => {
     );
   };
 
-  if (loadingDepartments) {
+  if (loadingDepartments || loadingGenres) {
     return <h1>Loading...</h1>;
   }
 
-  if (errorDepartment || !groups) {
+  if (errorDepartment || !groups || errorGenres || !genres) {
     return <h1>Server Error</h1>;
   }
 
   const groupOptions = (groups.departments ?? []).map((dept) => ({
     label: dept.name,
     value: dept.departmentId,
+  }));
+
+  const genreValues = (genres.genres ?? []).map((genre) => ({
+    label: genre.name,
+    value: genre.name,
   }));
 
   return (
@@ -241,7 +247,7 @@ const CreateShow = () => {
               <div className="flex items-center gap-5 flex-wrap">
                 <div className="flex gap-3 flex-wrap">
                   {showData.genre.map((genre, index) => {
-                    const availableGenres = genres.filter((g) => !showData.genre.includes(g.value) || g.value === genre);
+                    const availableGenres = genreValues.filter((g) => !showData.genre.includes(g.value) || g.value === genre);
 
                     return (
                       <div key={index} className="relative">

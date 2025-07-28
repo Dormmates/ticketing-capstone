@@ -32,7 +32,8 @@ const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, handleSeatP
       <Dropdown<SeatPricing>
         options={pricingOptions}
         label="Seat Pricing"
-        value={scheduleData.seatPricing}
+        disabled={scheduleData.seatingConfiguration === "freeSeating"}
+        value={scheduleData.seatingConfiguration === "freeSeating" ? "fixed" : scheduleData.seatPricing}
         className="mb-5"
         onChange={handleSeatPricingType}
       />
@@ -94,7 +95,7 @@ const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, handleSeatP
                 label="Balcony Left"
                 placeholder="PHP"
                 className="w-full min-w-[300px]"
-                name="orchestraLeft"
+                name="balconyLeft"
                 type="number"
                 isError={!!errors?.balconyLeft}
                 errorMessage={errors?.balconyLeft}
@@ -105,7 +106,7 @@ const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, handleSeatP
                 label="Balcony Middle"
                 placeholder="PHP"
                 className="w-full min-w-[300px]"
-                name="orchestraMiddle"
+                name="balconyMiddle"
                 type="number"
                 isError={!!errors?.balconyMiddle}
                 errorMessage={errors?.balconyMiddle}
@@ -116,7 +117,7 @@ const PricingSection = ({ scheduleData, ticketPrice, sectionedPrice, handleSeatP
                 label="Balcony Right"
                 placeholder="PHP"
                 className="w-full min-w-[300px]"
-                name="orchestraRight"
+                name="balconyRight"
                 type="number"
                 isError={!!errors?.balconyRight}
                 errorMessage={errors?.balconyRight}

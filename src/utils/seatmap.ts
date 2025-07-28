@@ -12,6 +12,7 @@ export const flattenSeatMap = (seatMap: SeatMap): FlattenedSeatMap => {
         status: seat.status ?? "available",
         ticketControlNumber: seat.ticketControlNumber ?? 0,
         ticketPrice: seat.ticketPrice ?? 0,
+        isComplimentary: false,
       }))
     )
   );

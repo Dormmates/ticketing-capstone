@@ -7,6 +7,7 @@ interface Props {
   seatClick: (seat: FlattenedSeat) => void;
   rowClick: (seats: FlattenedSeat[]) => void;
   seatMap: FlattenedSeatMap;
+  disabled?: boolean;
 }
 
 const getSeatColor = (seat: FlattenedSeat) => {
@@ -27,12 +28,13 @@ const getSeatColor = (seat: FlattenedSeat) => {
 
 type ContextType = { contentRef: React.RefObject<HTMLDivElement> };
 
-const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
+const SeatMapSchedule = ({ seatClick, rowClick, seatMap, disabled = false }: Props) => {
   const { contentRef } = useOutletContext<ContextType>();
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [scale, setScale] = useState(1);
   const [hoveredSeat, setHoveredSeat] = useState<null | FlattenedSeat>(null);
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -98,9 +100,9 @@ const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
       <div className="w-full h-full overflow-hidden flex justify-center items-center">
         <svg
           ref={svgRef}
-          width="1305"
-          height="700"
-          viewBox="0 0 1005 442"
+          width="1405"
+          height="492"
+          viewBox="0 -50 1105 492"
           className="bg-gray-100"
           style={{
             transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
@@ -123,6 +125,8 @@ const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
                     <text
                       className="hover:underline cursor-pointer"
                       onClick={() => rowClick(seats)}
+                      onMouseEnter={() => setHoveredRow(`${sectionName}-${rowName}`)}
+                      onMouseLeave={() => setHoveredRow(null)}
                       x={seats[0].x - 5}
                       y={seats[0].y + 12}
                       fontSize="10"
@@ -142,7 +146,9 @@ const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
                         height="14"
                         fill={getSeatColor(seat)}
                         stroke="black"
-                        className="hover:fill-blue-200 transition-colors cursor-pointer"
+                        className={`transition-colors cursor-${disabled ? "not-allowed" : "pointer"} ${
+                          hoveredRow === `${sectionName}-${rowName}` ? "fill-blue-200" : !disabled && "hover:fill-blue-200"
+                        }`}
                         onClick={() => seatClick(seat)}
                         onMouseEnter={(e) => handleMouseEnter(e, seat)}
                         onMouseLeave={() => setHoveredSeat(null)}
@@ -177,13 +183,19 @@ const SeatMapSchedule = ({ seatClick, rowClick, seatMap }: Props) => {
               pointerEvents: "none",
             }}
           >
-            <div>
-              <strong>{hoveredSeat.seatNumber}</strong>
-            </div>
-            <div>Section: {formatSectionName(hoveredSeat.section)}</div>
-            <div>Row: {hoveredSeat.row}</div>
-            <div>Price: ₱{hoveredSeat.ticketPrice.toFixed(2)}</div>
-            <div>Status: {hoveredSeat.status}</div>
+            {disabled ? (
+              <div className="text-red-600">Cannot select — fix control number issues first.</div>
+            ) : (
+              <>
+                <div>
+                  <strong>{hoveredSeat.seatNumber}</strong>
+                </div>
+                <div>Section: {formatSectionName(hoveredSeat.section)}</div>
+                <div>Row: {hoveredSeat.row}</div>
+                <div>Price: ₱{hoveredSeat.ticketPrice.toFixed(2)}</div>
+                <div>Status: {hoveredSeat.status}</div>
+              </>
+            )}
           </div>
         )}
       </div>
