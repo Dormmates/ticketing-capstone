@@ -29,6 +29,11 @@ import {
   CCALogin,
   ViewShowScheduleLayout,
   ScheduleSummary,
+  ScheduleDistributorAndRemittances,
+  ScheduleReservations,
+  ScheduleSeats,
+  ScheduleTallyData,
+  ScheduleTickets,
 } from "../pages/cca/index";
 
 const AppRoute = () => {
@@ -64,8 +69,13 @@ const AppRoute = () => {
             <Route path="shows" element={<Shows />} />
             <Route path="shows/add" element={<CreateShow />} />
             <Route path="shows/add/schedule/:id" element={<AddSchedule />} />
-            <Route path="schedule/:id" element={<ViewShowScheduleLayout />}>
+            <Route path="schedule/:showId/:scheduleId" element={<ViewShowScheduleLayout />}>
               <Route index element={<ScheduleSummary />} />
+              <Route path="d&r" element={<ScheduleDistributorAndRemittances />} />
+              <Route path="seats" element={<ScheduleSeats />} />
+              <Route path="tickets" element={<ScheduleTickets />} />
+              <Route path="tally" element={<ScheduleTallyData />} />
+              <Route path="reservations" element={<ScheduleReservations />} />
             </Route>
             <Route path="shows/:id" element={<ViewShow />} />
             <Route path="major-production" element={<MajorProduction />} />

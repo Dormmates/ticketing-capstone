@@ -111,7 +111,7 @@ const ViewShow = () => {
 
                       <TableCell>
                         <div className="flex gap-2 justify-end items-center ">
-                          <Link to={`/schedule/${schedule.scheduleId}`}>
+                          <Link to={`/schedule/${id}/${schedule.scheduleId}/`}>
                             <Button className="!bg-gray !border-darkGrey !border-2 !text-black" disabled={!schedule.isOpen}>
                               Go To Schedule
                             </Button>

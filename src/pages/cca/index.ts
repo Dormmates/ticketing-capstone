@@ -9,6 +9,11 @@ import Shows from "./shows/Shows";
 import ViewShow from "./shows/ViewShow";
 
 import ViewShowScheduleLayout from "./shows/schedules/ViewShowScheduleLayout";
+import ScheduleDistributorAndRemittances from "./shows/schedules/pages/ScheduleDistributorAndRemittances";
+import ScheduleReservations from "./shows/schedules/pages/ScheduleReservations";
+import ScheduleSeats from "./shows/schedules/pages/ScheduleSeats";
+import ScheduleTallyData from "./shows/schedules/pages/ScheduleTallyData";
+import ScheduleTickets from "./shows/schedules/pages/ScheduleTickets";
 import ScheduleSummary from "./shows/schedules/pages/ScheduleSummary";
 
 import MajorProduction from "./MajorProduction";
@@ -34,4 +39,9 @@ export {
   CCADashboard,
   ViewShowScheduleLayout,
   ScheduleSummary,
+  ScheduleDistributorAndRemittances,
+  ScheduleReservations,
+  ScheduleSeats,
+  ScheduleTallyData,
+  ScheduleTickets,
 };
