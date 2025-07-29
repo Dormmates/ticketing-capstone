@@ -53,7 +53,7 @@ const sideBarItems: SideBarItems[] = [
 const CCALayout = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   return (
-    <div className="min-w-[1200px] min-h-screen">
+    <div className="min-w-[1200px] ">
       <Header />
       <div className="flex h-[calc(100vh-120px)] pt-[120px]">
         <SideBar items={sideBarItems} />

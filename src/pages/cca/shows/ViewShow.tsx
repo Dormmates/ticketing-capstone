@@ -75,7 +75,9 @@ const ViewShow = () => {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Time</TableHead>
+                  <TableHead>Seating Type</TableHead>
                   <TableHead>Schedule Status</TableHead>
+
                   <TableHead className="text-center pl-60">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -83,13 +85,16 @@ const ViewShow = () => {
               <TableBody>
                 {showSchedules.schedules.length == 0 ? (
                   <TableRow>
-                    <TableCell>No Schedules</TableCell>
+                    <TableCell colSpan={5} className="text-center py-10 text-gray-400">
+                      No Schedules
+                    </TableCell>
                   </TableRow>
                 ) : (
                   showSchedules.schedules.map((schedule) => (
                     <TableRow>
                       <TableCell>{formatToReadableDate(schedule.datetime)}</TableCell>
                       <TableCell>{formatToReadableTime(schedule.datetime)}</TableCell>
+                      <TableCell>{schedule.seatingType.toUpperCase()}</TableCell>
                       <TableCell>
                         {schedule.isOpen ? (
                           <div className="flex items-center gap-2">
@@ -103,6 +108,7 @@ const ViewShow = () => {
                           </div>
                         )}
                       </TableCell>
+
                       <TableCell>
                         <div className="flex gap-2 justify-end items-center ">
                           <Link to={`/schedule/${schedule.scheduleId}`}>

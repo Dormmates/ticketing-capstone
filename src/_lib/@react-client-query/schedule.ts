@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
 
 import type { ScheduleFormData, SeatingConfiguration, TicketType } from "../../types/schedule";
+import type { FlattenedSeatMap } from "../../types/seat";
 
 export interface AddSchedulePayload extends ScheduleFormData {
   showId: string;
@@ -15,6 +16,7 @@ export interface AddSchedulePayload extends ScheduleFormData {
     balconyMiddle: number;
     balconyRight: number;
   };
+  seats?: FlattenedSeatMap;
 }
 
 interface ShowSchedule {

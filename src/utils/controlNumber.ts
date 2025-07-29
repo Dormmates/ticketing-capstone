@@ -33,3 +33,8 @@ export const parseSeat = (seat: string): { row: string; number: number } => {
     number: parseInt(match[2], 10),
   };
 };
+
+export const validateControlInput = (control: string) => {
+  const validCharsOnly = /^[0-9,\-\s]+$/;
+  return validCharsOnly.test(control);
+};
