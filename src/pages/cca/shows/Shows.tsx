@@ -12,6 +12,9 @@ import { useAuthContext } from "../../../context/AuthContext";
 import { Pagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/Table";
 import { useDebounce } from "../../../hooks/useDeabounce";
 import archiveIcon from "../../../assets/icons/archive.png";
+import Modal from "../../../components/ui/Modal";
+import type { ShowData } from "../../../types/show";
+import EditShowDetails from "./components/EditShowDetails";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -32,11 +35,14 @@ const Shows = () => {
   const [showType, setShowType] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
+  const [isEditDetails, setIsEditDetails] = useState(false);
 
+  const debouncedSearch = useDebounce(search, 500);
   const { user } = useAuthContext();
   const { data: showsData, isLoading: showsLoading } = useGetShows(user?.role === "trainer" && user?.department ? user.department.departmentId : "");
   const { data: departmentsData, isLoading: departmentsLoading } = useGetDepartments();
+
+  const [selectedShow, setSelectedShow] = useState<ShowData | null>();
 
   const departments = useMemo(() => {
     return parseDepartments(departmentsData?.departments ?? []);
@@ -133,7 +139,14 @@ const Shows = () => {
                           Go To Schedules
                         </Button>
                       </Link>
-                      <Button>Edit Details</Button>
+                      <Button
+                        onClick={() => {
+                          setIsEditDetails(true);
+                          setSelectedShow(show);
+                        }}
+                      >
+                        Edit Details
+                      </Button>
                       <div className="relative group">
                         <Button variant="plain">
                           <img src={archiveIcon} alt="archive" />
@@ -157,6 +170,12 @@ const Shows = () => {
       </div>
 
       <Button className="fixed bottom-10 right-10 shadow-lg rounded-full !text-black">View Archived Show</Button>
+
+      {isEditDetails && (
+        <Modal isOpen={isEditDetails} title="Edit Show Details" onClose={() => setIsEditDetails(false)}>
+          <EditShowDetails selectedShow={selectedShow as ShowData} />
+        </Modal>
+      )}
     </ContentWrapper>
   );
 };

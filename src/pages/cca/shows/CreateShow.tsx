@@ -19,11 +19,6 @@ const productionType = [
   { label: "Major Concert", value: "majorConcert" },
 ];
 
-const genres123 = Array.from({ length: 10 }, (_, i) => ({
-  label: `${i + 1}`,
-  value: `${i + 1}`,
-}));
-
 const CreateShow = () => {
   const { user } = useAuthContext();
   const { data: groups, isLoading: loadingDepartments, error: errorDepartment } = useGetDepartments();

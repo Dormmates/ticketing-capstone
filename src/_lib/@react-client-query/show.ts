@@ -1,45 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { request } from "../api";
-import type { Department } from "../../types/department";
-
-interface NewShowPayload {
-  showTitle: string;
-  description: string;
-  department: any;
-  genre: string;
-  createdBy: string;
-  showType: any;
-  image: File;
-}
-
-interface ShowData {
-  showId: string;
-  title: string;
-  description: string;
-  showType: "showCase" | "majorConcert" | "majorProduction";
-  departmentId: string;
-  department: {
-    departmentId: string;
-    name: string;
-    trainerId: string;
-  };
-  createdBy: string;
-  createdAt: string;
-  isArchived: boolean;
-  showCover: string;
-  genreNames: string[];
-  showschedules: any[];
-}
-
-interface ShowList {
-  shows: {
-    showId: string;
-    title: string;
-    showType: "showCase" | "majorConcert";
-    department: Department;
-    showCover: string;
-  }[];
-}
+import type { NewShowPayload, ShowData, ShowList } from "../../types/show";
 
 export const useCreateShow = () => {
   return useMutation<any, Error, NewShowPayload>({
